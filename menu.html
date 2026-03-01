@@ -333,6 +333,11 @@
         </div>
     </footer>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
     <script>
     // ========== MENU DATA (same as main app) ==========
     var menuData = {
@@ -436,6 +441,84 @@
 
     // Initial render
     renderItems('all');
+
+    // ========== SYNC NEW ITEMS FROM FIRESTORE ==========
+    function formatDisplayPrice(fsItem) {
+        if (fsItem.prices) {
+            var vals = Object.values(fsItem.prices).map(Number).sort(function(a, b) { return a - b; });
+            return '₹' + vals[0] + ' – ₹' + vals[vals.length - 1];
+        } else if (fsItem.sizes) {
+            var vals = Object.values(fsItem.sizes).map(Number).sort(function(a, b) { return a - b; });
+            return '₹' + vals[0] + ' – ₹' + vals[vals.length - 1];
+        } else if (fsItem.thickPrice) {
+            return '₹' + fsItem.price + ' – ₹' + fsItem.thickPrice;
+        } else if (fsItem.price !== undefined) {
+            return '₹' + fsItem.price;
+        }
+        return '';
+    }
+
+    // Build hardcoded item names for matching
+    var hardcodedNames = {};
+    Object.keys(menuData).forEach(function(catKey) {
+        menuData[catKey].items.forEach(function(item) {
+            hardcodedNames[item.name.toLowerCase().trim()] = true;
+        });
+    });
+
+    if (typeof menuRef !== 'undefined' && menuRef) {
+        menuRef.onSnapshot(function(snap) {
+            var changed = false;
+            snap.forEach(function(doc) {
+                var d = doc.data();
+                var cat = d.category;
+                if (!cat || !menuData[cat]) return;
+                if (d.available === false) return; // Don't show unavailable items on menu page
+
+                // Skip if name matches a hardcoded item
+                var nameLower = (d.name || '').toLowerCase().trim();
+                if (hardcodedNames[nameLower]) {
+                    // Update price of existing hardcoded item if Firestore has pricing data
+                    var displayPrice = formatDisplayPrice(d);
+                    if (displayPrice) {
+                        menuData[cat].items.forEach(function(item) {
+                            if (item.name.toLowerCase().trim() === nameLower) {
+                                item.price = displayPrice;
+                                if (d.image) item.image = d.image;
+                                changed = true;
+                            }
+                        });
+                    }
+                    return;
+                }
+
+                // Check if already added from a previous snapshot
+                var exists = menuData[cat].items.some(function(i) { return i._fsId === doc.id; });
+                if (exists) return;
+
+                // Build display item
+                var catVeg = menuData[cat].veg !== undefined ? menuData[cat].veg : false;
+                var newItem = {
+                    _fsId: doc.id,
+                    name: d.name || 'Unnamed',
+                    price: formatDisplayPrice(d),
+                    image: d.image || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80',
+                    veg: (d.veg !== undefined) ? d.veg : catVeg
+                };
+                menuData[cat].items.push(newItem);
+                changed = true;
+            });
+
+            if (changed) {
+                // Re-render with current active filter
+                var activeTab = document.querySelector('.filter-tab.active');
+                var currentFilter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
+                renderItems(currentFilter);
+            }
+        }, function(err) {
+            console.warn('[KKFC Menu] Firestore sync error:', err.message);
+        });
+    }
 
     // ========== MOBILE TOUCH ROTATION ==========
     function setupTouchRotation() {
