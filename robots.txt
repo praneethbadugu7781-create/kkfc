@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kartikeyakkfcfoods.in/sitemap.xml
+
+# Block admin panel from search engines
+User-agent: *
+Disallow: /admin.html
