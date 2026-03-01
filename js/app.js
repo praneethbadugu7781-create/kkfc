@@ -769,9 +769,9 @@ function openCustomizeModal(item) {
     } else if (item.thickPrice) {
         // Shakes - regular/thick selection
         elements.variantSelection.classList.remove('hidden');
-        createVariantOption('Regular', item.price, true);
+        createVariantOption('Milk Shake', item.price, true);
         createVariantOption('Thick Shake', item.thickPrice, false);
-        selectedVariant = 'Regular';
+        selectedVariant = 'Milk Shake';
     } else {
         // Fixed price items (combos, some others)
         elements.variantSelection.classList.add('hidden');
