@@ -16,15 +16,20 @@ function syncMenuFromFirestore() {
     menuRef.onSnapshot(function(snap) {
         var firestoreItems = {};
         snap.forEach(function(doc) {
-            firestoreItems[doc.id] = doc.data();
+            var d = doc.data();
+            d._fsId = doc.id;
+            firestoreItems[doc.id] = d;
         });
-        // Merge availability into menuData
+
+        // Build a set of all hardcoded item IDs
+        var hardcodedIds = {};
         Object.keys(menuData).forEach(function(catKey) {
             menuData[catKey].items.forEach(function(item) {
+                hardcodedIds[item.id] = true;
+                // Update existing items from Firestore
                 if (firestoreItems[item.id]) {
                     var fsItem = firestoreItems[item.id];
                     item.available = fsItem.available !== false;
-                    // Also sync name/desc/price/image if changed in admin
                     if (fsItem.name) item.name = fsItem.name;
                     if (fsItem.desc !== undefined) item.desc = fsItem.desc;
                     if (fsItem.image) item.image = fsItem.image;
@@ -33,10 +38,65 @@ function syncMenuFromFirestore() {
                     if (fsItem.price !== undefined) item.price = fsItem.price;
                     if (fsItem.thickPrice !== undefined) item.thickPrice = fsItem.thickPrice;
                 } else {
-                    item.available = true; // default available if not in Firestore
+                    item.available = true;
                 }
             });
         });
+
+        // Add NEW items from Firestore that don't exist in hardcoded data
+        Object.keys(firestoreItems).forEach(function(fsId) {
+            if (hardcodedIds[fsId]) return; // already merged above
+            var fsItem = firestoreItems[fsId];
+            var cat = fsItem.category; // e.g. 'icecream', 'shakes', 'chicken', 'combos'
+            if (!cat || !menuData[cat]) return; // unknown category, skip
+
+            // Build item object matching hardcoded format
+            var newItem = {
+                id: fsId,
+                name: fsItem.name || 'Unnamed Item',
+                desc: fsItem.desc || '',
+                image: fsItem.image || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80',
+                available: fsItem.available !== false
+            };
+
+            // Set pricing based on category
+            if (fsItem.prices) newItem.prices = fsItem.prices;
+            if (fsItem.sizes) newItem.sizes = fsItem.sizes;
+            if (fsItem.price !== undefined) newItem.price = fsItem.price;
+            if (fsItem.thickPrice !== undefined) newItem.thickPrice = fsItem.thickPrice;
+
+            // Check if already added (from a previous snapshot)
+            var exists = menuData[cat].items.some(function(i) { return i.id === fsId; });
+            if (!exists) {
+                menuData[cat].items.push(newItem);
+                console.log('[KKFC] New item added from Firestore:', newItem.name, 'in', cat);
+            } else {
+                // Update existing dynamically-added item
+                menuData[cat].items.forEach(function(item) {
+                    if (item.id === fsId) {
+                        item.name = newItem.name;
+                        item.desc = newItem.desc;
+                        item.image = newItem.image;
+                        item.available = newItem.available;
+                        if (fsItem.prices) item.prices = fsItem.prices;
+                        if (fsItem.sizes) item.sizes = fsItem.sizes;
+                        if (fsItem.price !== undefined) item.price = fsItem.price;
+                        if (fsItem.thickPrice !== undefined) item.thickPrice = fsItem.thickPrice;
+                    }
+                });
+            }
+        });
+
+        // Remove items deleted from Firestore (only dynamically-added ones)
+        Object.keys(menuData).forEach(function(catKey) {
+            menuData[catKey].items = menuData[catKey].items.filter(function(item) {
+                // Keep hardcoded items always
+                if (hardcodedIds[item.id]) return true;
+                // Keep Firestore items only if they still exist
+                return !!firestoreItems[item.id];
+            });
+        });
+
         console.log('[KKFC] Menu synced from Firestore');
         // Re-render if currently viewing a category
         if (currentCategory && menuData[currentCategory]) {
@@ -51,6 +111,9 @@ function syncMenuFromFirestore() {
 }
 
 // ========== SYNC OFFERS FROM FIRESTORE ==========
+var activeOffersCache = []; // Global store for applying coupons
+var appliedCoupon = null; // Currently applied coupon
+
 function syncOffersFromFirestore() {
     if (typeof offersRef === 'undefined' || !offersRef) {
         console.log('[KKFC] Firestore offers not available');
@@ -111,9 +174,96 @@ function syncOffersFromFirestore() {
         });
         scroll.innerHTML = html;
         console.log('[KKFC] Offers synced:', activeOffers.length, 'active');
+
+        // Store globally for coupon logic
+        activeOffersCache = activeOffers;
+
+        // Re-validate applied coupon (in case offer was deactivated)
+        if (appliedCoupon) {
+            var stillValid = activeOffers.some(function(o) { return o.code && o.code === appliedCoupon.code; });
+            if (!stillValid) {
+                appliedCoupon = null;
+                updateCartUI();
+            }
+        }
     }, function(err) {
         console.warn('[KKFC] Offers sync error:', err.message);
     });
+}
+
+// ========== COUPON / PROMO CODE LOGIC ==========
+function applyCoupon(code) {
+    if (!code) return { success: false, msg: 'Please enter a promo code' };
+    code = code.trim().toUpperCase();
+
+    var offer = null;
+    for (var i = 0; i < activeOffersCache.length; i++) {
+        if (activeOffersCache[i].code && activeOffersCache[i].code.toUpperCase() === code) {
+            offer = activeOffersCache[i];
+            break;
+        }
+    }
+
+    if (!offer) return { success: false, msg: 'Invalid promo code' };
+
+    // Check minimum order
+    var subtotal = cart.reduce(function(sum, item) { return sum + (item.unitPrice * item.quantity); }, 0);
+    if (offer.minOrder && subtotal < Number(offer.minOrder)) {
+        return { success: false, msg: 'Minimum order ₹' + offer.minOrder + ' required' };
+    }
+
+    // Check category match
+    if (offer.category && offer.category !== 'all') {
+        var hasCatItem = cart.some(function(item) {
+            return item.categoryType === offer.category;
+        });
+        if (!hasCatItem) {
+            var catName = offer.category.charAt(0).toUpperCase() + offer.category.slice(1);
+            return { success: false, msg: 'This code is only for ' + catName + ' items' };
+        }
+    }
+
+    appliedCoupon = offer;
+    return { success: true, msg: 'Coupon applied! ' + getCouponLabel(offer) };
+}
+
+function removeCoupon() {
+    appliedCoupon = null;
+    updateCartUI();
+}
+
+function getCouponLabel(offer) {
+    if (offer.type === 'percent') return offer.value + '% OFF';
+    if (offer.type === 'flat') return '₹' + offer.value + ' OFF';
+    if (offer.type === 'bogo') return 'Buy 1 Get 1 Free';
+    if (offer.type === 'freebie') return 'Free Item';
+    return 'Special Offer';
+}
+
+function calculateDiscount(subtotal) {
+    if (!appliedCoupon) return 0;
+    var offer = appliedCoupon;
+    if (offer.type === 'percent') {
+        return Math.round(subtotal * (Number(offer.value) / 100));
+    } else if (offer.type === 'flat') {
+        return Math.min(Number(offer.value), subtotal);
+    } else if (offer.type === 'bogo') {
+        // Find cheapest eligible item and make it free
+        var cheapest = Infinity;
+        cart.forEach(function(item) {
+            if (!offer.category || offer.category === 'all' || item.categoryType === offer.category) {
+                if (item.unitPrice < cheapest) cheapest = item.unitPrice;
+            }
+        });
+        return cheapest < Infinity ? cheapest : 0;
+    } else if (offer.type === 'freebie') {
+        var cheapestItem = Infinity;
+        cart.forEach(function(item) {
+            if (item.unitPrice < cheapestItem) cheapestItem = item.unitPrice;
+        });
+        return cheapestItem < Infinity ? cheapestItem : 0;
+    }
+    return 0;
 }
 
 // ========== MENU DATA ==========
@@ -881,7 +1031,8 @@ function addToCart() {
             image: currentItem.image,
             variant: variantDisplay,
             unitPrice,
-            quantity: customizeQuantity
+            quantity: customizeQuantity,
+            categoryType: currentItem.categoryType || ''
         });
     }
     
@@ -975,6 +1126,59 @@ function updateCartUI() {
     });
     
     elements.subtotalAmount.textContent = formatPrice(subtotal);
+
+    // ===== COUPON / DISCOUNT DISPLAY =====
+    var couponArea = document.getElementById('couponArea');
+    var discountRow = document.getElementById('discountRow');
+    var cartTotalRow = document.getElementById('cartTotalRow');
+
+    if (couponArea) {
+        if (appliedCoupon) {
+            couponArea.innerHTML = '<div class="coupon-applied">' +
+                '<span class="coupon-applied-tag">🎉 ' + appliedCoupon.code + ' — ' + getCouponLabel(appliedCoupon) + '</span>' +
+                '<button class="coupon-remove-btn" id="removeCouponBtn">✕</button>' +
+                '</div>';
+            var removeBtn = document.getElementById('removeCouponBtn');
+            if (removeBtn) removeBtn.addEventListener('click', removeCoupon);
+        } else {
+            couponArea.innerHTML = '<div class="coupon-input-row">' +
+                '<input type="text" id="couponInput" class="coupon-input" placeholder="Promo code">' +
+                '<button class="coupon-apply-btn" id="applyCouponBtn">Apply</button>' +
+                '</div>' +
+                '<span class="coupon-msg" id="couponMsg"></span>';
+            var applyBtn = document.getElementById('applyCouponBtn');
+            var couponInput = document.getElementById('couponInput');
+            if (applyBtn && couponInput) {
+                applyBtn.addEventListener('click', function() {
+                    var result = applyCoupon(couponInput.value);
+                    var msgEl = document.getElementById('couponMsg');
+                    if (result.success) {
+                        updateCartUI();
+                    } else if (msgEl) {
+                        msgEl.textContent = result.msg;
+                        msgEl.className = 'coupon-msg coupon-msg-error';
+                    }
+                });
+                couponInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') { e.preventDefault(); applyBtn.click(); }
+                });
+            }
+        }
+    }
+
+    // Show/hide discount row
+    var discount = calculateDiscount(subtotal);
+    if (discountRow) {
+        if (discount > 0) {
+            discountRow.style.display = 'flex';
+            document.getElementById('discountAmount').textContent = '- ' + formatPrice(discount);
+        } else {
+            discountRow.style.display = 'none';
+        }
+    }
+    if (cartTotalRow) {
+        cartTotalRow.querySelector('.cart-total-amount').textContent = formatPrice(subtotal - discount);
+    }
     
     // Add event listeners
     elements.cartItems.querySelectorAll('.cart-qty-btn').forEach(btn => {
@@ -1010,11 +1214,11 @@ function openCheckout() {
     
     // Render summary
     elements.checkoutSummary.innerHTML = '';
-    let total = 0;
+    let subtotal = 0;
     
     cart.forEach(item => {
         const itemTotal = item.unitPrice * item.quantity;
-        total += itemTotal;
+        subtotal += itemTotal;
         
         const summaryItem = document.createElement('div');
         summaryItem.className = 'summary-item';
@@ -1027,6 +1231,17 @@ function openCheckout() {
         `;
         elements.checkoutSummary.appendChild(summaryItem);
     });
+
+    // Apply discount if coupon is active
+    var discount = calculateDiscount(subtotal);
+    var total = subtotal - discount;
+
+    if (discount > 0 && appliedCoupon) {
+        var discountSummary = document.createElement('div');
+        discountSummary.className = 'summary-item summary-discount';
+        discountSummary.innerHTML = '<div class="summary-item-info"><span class="summary-item-name" style="color:#16A34A;">🎉 ' + appliedCoupon.code + ' (' + getCouponLabel(appliedCoupon) + ')</span></div><span class="summary-item-price" style="color:#16A34A;">- ' + formatPrice(discount) + '</span>';
+        elements.checkoutSummary.appendChild(discountSummary);
+    }
     
     elements.checkoutTotal.textContent = formatPrice(total);
     
@@ -1256,10 +1471,10 @@ function processOrder(e) {
     message += `\nOrder Details:\n`;
     message += `----------------------------------------\n`;
     
-    let total = 0;
+    let subtotalOrder = 0;
     cart.forEach((item, index) => {
         const itemTotal = item.unitPrice * item.quantity;
-        total += itemTotal;
+        subtotalOrder += itemTotal;
         message += `${index + 1}. ${item.name}\n`;
         if (item.variant) {
             message += `   Size: ${item.variant}\n`;
@@ -1268,7 +1483,14 @@ function processOrder(e) {
         message += `   Amount: Rs. ${itemTotal.toFixed(2)}\n\n`;
     });
     
+    var orderDiscount = calculateDiscount(subtotalOrder);
+    var total = subtotalOrder - orderDiscount;
+
     message += `----------------------------------------\n`;
+    if (orderDiscount > 0 && appliedCoupon) {
+        message += `Subtotal: Rs. ${subtotalOrder.toFixed(2)}\n`;
+        message += `Discount (${appliedCoupon.code}): - Rs. ${orderDiscount.toFixed(2)}\n`;
+    }
     message += `Total Amount: Rs. ${total.toFixed(2)}\n`;
     
     // Encode and redirect to WhatsApp
@@ -1295,6 +1517,9 @@ function processOrder(e) {
                 address: deliveryLocation,
                 notes: orderNotes || '',
                 items: orderItems,
+                subtotal: subtotalOrder,
+                discount: orderDiscount,
+                couponCode: appliedCoupon ? appliedCoupon.code : null,
                 total: total,
                 paymentMethod: paymentMethod,
                 status: 'pending',
@@ -1307,8 +1532,9 @@ function processOrder(e) {
         console.warn('[KKFC] Firestore not available, order not saved:', e.message);
     }
     
-    // Clear cart and close modals
+    // Clear cart, coupon and close modals
     cart = [];
+    appliedCoupon = null;
     saveCart();
     updateCartUI();
     closeCheckout();
