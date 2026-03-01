@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>KKFC Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- ========== LOGIN SCREEN ========== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                <h1>KKFC Admin</h1>
+                <p>Manage your store, menu & orders</p>
+            </div>
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="admin@kkfc.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" required>
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span>Sign In</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== ADMIN DASHBOARD ========== -->
+    <div class="admin-app" id="adminApp" style="display:none;">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-icon">K</span>
+                <span class="logo-label">KKFC Admin</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                    Dashboard
+                </button>
+                <button class="nav-btn" data-tab="menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    Menu Items
+                </button>
+                <button class="nav-btn" data-tab="offers">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    Offers & Deals
+                </button>
+                <button class="nav-btn" data-tab="orders">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    Orders
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="nav-btn logout-btn" id="logoutBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Header -->
+        <header class="mobile-header" id="mobileHeader">
+            <button class="menu-toggle" id="menuToggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <span class="mobile-title">KKFC Admin</span>
+            <button class="mobile-logout" id="mobileLogoutBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="admin-main" id="adminMain">
+
+            <!-- ===== DASHBOARD TAB ===== -->
+            <section class="tab-content active" id="tab-dashboard">
+                <div class="page-header">
+                    <h2>Dashboard</h2>
+                    <p>Welcome back! Here's an overview of your store.</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statMenuItems">0</span>
+                            <span class="stat-label">Menu Items</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statActiveOffers">0</span>
+                            <span class="stat-label">Active Offers</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statTotalOrders">0</span>
+                            <span class="stat-label">Total Orders</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statTodayOrders">0</span>
+                            <span class="stat-label">Today's Orders</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders Preview -->
+                <div class="card mt-xl">
+                    <div class="card-header">
+                        <h3>Recent Orders</h3>
+                        <button class="btn-text" onclick="switchTab('orders')">View All →</button>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                                <tr><td colspan="6" class="empty-cell">No orders yet</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== MENU ITEMS TAB ===== -->
+            <section class="tab-content" id="tab-menu">
+                <div class="page-header">
+                    <h2>Menu Items</h2>
+                    <div class="page-actions">
+                        <button class="btn-primary" id="addMenuItemBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Add Item
+                        </button>
+                        <button class="btn-outline" id="seedMenuBtn" title="Upload current hardcoded menu to Firestore">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Seed Menu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-cat="all">All</button>
+                    <button class="filter-btn" data-cat="icecream">Ice Creams</button>
+                    <button class="filter-btn" data-cat="shakes">Shakes</button>
+                    <button class="filter-btn" data-cat="chicken">Chicken</button>
+                    <button class="filter-btn" data-cat="combos">Combos</button>
+                </div>
+
+                <!-- Menu Items Grid -->
+                <div class="menu-grid" id="adminMenuGrid">
+                    <div class="loading-state">Loading menu items...</div>
+                </div>
+            </section>
+
+            <!-- ===== OFFERS TAB ===== -->
+            <section class="tab-content" id="tab-offers">
+                <div class="page-header">
+                    <h2>Offers & Deals</h2>
+                    <button class="btn-primary" id="addOfferBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Offer
+                    </button>
+                </div>
+                <div class="offers-grid" id="adminOffersGrid">
+                    <div class="loading-state">Loading offers...</div>
+                </div>
+            </section>
+
+            <!-- ===== ORDERS TAB ===== -->
+            <section class="tab-content" id="tab-orders">
+                <div class="page-header">
+                    <h2>Orders</h2>
+                    <div class="page-actions">
+                        <select class="select-filter" id="orderStatusFilter">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="preparing">Preparing</option>
+                            <option value="ready">Ready</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr><td colspan="9" class="empty-cell">No orders yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ========== MENU ITEM MODAL ========== -->
+    <div class="modal-overlay" id="menuItemModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="menuModalTitle">Add Menu Item</h3>
+                <button class="modal-close" onclick="closeModal('menuItemModal')">&times;</button>
+            </div>
+            <form id="menuItemForm" class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="itemCategory" required>
+                            <option value="">Select category</option>
+                            <option value="icecream">Ice Creams</option>
+                            <option value="shakes">Shakes</option>
+                            <option value="chicken">Chicken</option>
+                            <option value="combos">Combos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" id="itemName" placeholder="e.g. Vanilla Ice Cream" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="itemDesc" placeholder="Short description">
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="url" id="itemImage" placeholder="https://...">
+                    <small>Paste an image URL or upload to Firebase Storage</small>
+                </div>
+
+                <!-- Pricing: changes based on category -->
+                <div class="pricing-section" id="pricingSection">
+                    <label class="section-label">Pricing</label>
+
+                    <!-- Single price (combos, some chicken) -->
+                    <div class="price-mode" id="priceModeSingle">
+                        <div class="form-group">
+                            <label>Price (₹)</label>
+                            <input type="number" id="itemPrice" placeholder="0" min="0">
+                        </div>
+                    </div>
+
+                    <!-- Ice cream prices -->
+                    <div class="price-mode" id="priceModeIcecream" style="display:none;">
+                        <div class="form-row three">
+                            <div class="form-group">
+                                <label>250g (₹)</label>
+                                <input type="number" id="price250g" placeholder="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>500g (₹)</label>
+                                <input type="number" id="price500g" placeholder="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>1kg (₹)</label>
+                                <input type="number" id="price1kg" placeholder="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shake prices -->
+                    <div class="price-mode" id="priceModeShake" style="display:none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Milk Shake (₹)</label>
+                                <input type="number" id="priceShake" placeholder="0" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Thick Shake (₹) <small>optional</small></label>
+                                <input type="number" id="priceThick" placeholder="0" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chicken sizes -->
+                    <div class="price-mode" id="priceModeChicken" style="display:none;">
+                        <div id="chickenSizesContainer">
+                            <div class="size-row">
+                                <input type="text" placeholder="Size label (e.g. Small 4 Pcs)" class="size-label">
+                                <input type="number" placeholder="Price ₹" class="size-price" min="0">
+                                <button type="button" class="btn-icon remove-size" title="Remove">&times;</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-text" id="addSizeBtn">+ Add Size</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="itemAvailable" checked>
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-text">Available</span>
+                    </label>
+                </div>
+
+                <input type="hidden" id="editItemId">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('menuItemModal')">Cancel</button>
+                    <button type="submit" class="btn-primary" id="saveItemBtn">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== OFFER MODAL ========== -->
+    <div class="modal-overlay" id="offerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="offerModalTitle">Add Offer</h3>
+                <button class="modal-close" onclick="closeModal('offerModal')">&times;</button>
+            </div>
+            <form id="offerForm" class="modal-body">
+                <div class="form-group">
+                    <label>Offer Title *</label>
+                    <input type="text" id="offerTitle" placeholder="e.g. 20% OFF on Ice Creams" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="offerDesc" placeholder="Offer details..." rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Discount Type</label>
+                        <select id="offerType">
+                            <option value="percent">Percentage (%)</option>
+                            <option value="flat">Flat Amount (₹)</option>
+                            <option value="bogo">Buy 1 Get 1</option>
+                            <option value="freebie">Free Item</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="discountValueGroup">
+                        <label>Discount Value</label>
+                        <input type="number" id="offerValue" placeholder="e.g. 20" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Applies to</label>
+                        <select id="offerCategory">
+                            <option value="all">All Items</option>
+                            <option value="icecream">Ice Creams</option>
+                            <option value="shakes">Shakes</option>
+                            <option value="chicken">Chicken</option>
+                            <option value="combos">Combos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Min Order (₹) <small>optional</small></label>
+                        <input type="number" id="offerMinOrder" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Valid From</label>
+                        <input type="date" id="offerStart">
+                    </div>
+                    <div class="form-group">
+                        <label>Valid Until</label>
+                        <input type="date" id="offerEnd">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Promo Code <small>optional</small></label>
+                    <input type="text" id="offerCode" placeholder="e.g. KKFC20" style="text-transform:uppercase;">
+                </div>
+                <div class="form-group">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="offerActive" checked>
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-text">Active</span>
+                    </label>
+                </div>
+                <input type="hidden" id="editOfferId">
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('offerModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Offer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== ORDER DETAIL MODAL ========== -->
+    <div class="modal-overlay" id="orderDetailModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="modal-close" onclick="closeModal('orderDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="orderDetailBody">
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

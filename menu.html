@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="description" content="Menu - Kartikeya Ice Creams & KKFC">
+    <title>Menu - Kartikeya Ice Creams & KKFC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* ========== MENU PAGE — PLATERIA STYLE ========== */
+        .menu-hero {
+            padding: var(--sp-3xl) 0 var(--sp-xl);
+            background: var(--bg);
+            text-align: center;
+        }
+
+        /* Filter tabs */
+        .menu-filter-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--sp-sm);
+            flex-wrap: wrap;
+            margin-top: var(--sp-xl);
+        }
+
+        .filter-tab {
+            padding: 0.6rem 1.5rem;
+            background: transparent;
+            color: var(--text-body);
+            font-family: var(--font-body);
+            font-size: var(--fs-sm);
+            font-weight: 500;
+            border-radius: var(--r-full);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            z-index: 2;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            user-select: none;
+        }
+
+        .filter-tab:hover {
+            background: var(--accent-light);
+            color: var(--accent);
+            border-color: var(--accent-border);
+        }
+
+        .filter-tab.active {
+            background: var(--accent);
+            color: var(--text-white);
+            border-color: var(--accent);
+        }
+
+        /* Menu grid */
+        .plateria-menu-section {
+            padding: var(--sp-2xl) 0 var(--sp-4xl);
+            background: var(--bg);
+        }
+
+        .plateria-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--sp-2xl) var(--sp-xl);
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: 0 var(--sp-lg);
+        }
+
+        @media (max-width: 1024px) {
+            .plateria-menu-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .plateria-menu-grid { grid-template-columns: repeat(2, 1fr); gap: var(--sp-xl) var(--sp-base); padding: 0 var(--sp-base); }
+        }
+
+        @media (max-width: 400px) {
+            .plateria-menu-grid { gap: var(--sp-lg) var(--sp-sm); }
+        }
+
+        /* Single menu item — Plateria circular style */
+        .plateria-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .plateria-item-img {
+            position: relative;
+            width: 100%;
+            max-width: 220px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: var(--sp-base);
+            background: var(--bg-warm);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: box-shadow 0.4s ease;
+        }
+
+        .plateria-item:hover .plateria-item-img,
+        .plateria-item.touched .plateria-item-img {
+            box-shadow: 0 8px 30px rgba(232,119,42,0.18);
+        }
+
+        .plateria-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: transform;
+        }
+
+        /* ROTATION on hover + touch */
+        .plateria-item:hover .plateria-item-img img,
+        .plateria-item.touched .plateria-item-img img {
+            transform: rotate(15deg) scale(1.08);
+        }
+
+        /* Veg/non-veg indicator */
+        .plateria-item-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .plateria-item-badge svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .badge-veg svg { color: #4CAF50; }
+        .badge-nonveg svg { color: #E53935; }
+
+        .plateria-item-name {
+            font-family: var(--font-heading);
+            font-size: var(--fs-base);
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .plateria-item-name .veg-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .veg-dot.veg { background: #4CAF50; }
+        .veg-dot.nonveg { background: #E53935; }
+
+        .plateria-item-price {
+            font-size: var(--fs-sm);
+            color: var(--text-body);
+            font-weight: 500;
+        }
+
+        /* Animation */
+        .plateria-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: menuFadeUp 0.5s ease forwards;
+        }
+
+        @keyframes menuFadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            .menu-hero { padding: var(--sp-xl) 0 var(--sp-base); }
+            .menu-filter-tabs { gap: var(--sp-xs); margin-top: var(--sp-base); }
+            .filter-tab { padding: 0.45rem 1rem; font-size: var(--fs-xs); }
+            .plateria-item-img { max-width: 160px; }
+            .plateria-item-name { font-size: var(--fs-sm); }
+            .plateria-item-price { font-size: var(--fs-xs); }
+        }
+
+        @media (max-width: 360px) {
+            .plateria-item-img { max-width: 130px; }
+            .plateria-item-name { font-size: var(--fs-xs); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== TOP NAVIGATION ========== -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <a href="index.html" class="logo-text">Kartikeya</a>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="menu.html" class="nav-item active">Menu</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="contact.html" class="nav-item">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <a href="index.html" class="btn-primary-sm">Order Now</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content page-content">
+
+        <!-- ========== MENU HERO ========== -->
+        <section class="menu-hero">
+            <div class="section-container">
+                <div class="section-header-center">
+                    <span class="tag-label on-light">THIS IS WHAT WE SERVE YOU</span>
+                    <h2 class="section-heading">Discover the perfect<br>meal for every taste</h2>
+                </div>
+                <div class="menu-filter-tabs" id="filterTabs">
+                    <button class="filter-tab active" data-filter="all">Full Menu</button>
+                    <button class="filter-tab" data-filter="icecream">Ice Creams</button>
+                    <button class="filter-tab" data-filter="shakes">Shakes</button>
+                    <button class="filter-tab" data-filter="chicken">Chicken</button>
+                    <button class="filter-tab" data-filter="combos">Combos</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MENU ITEMS GRID ========== -->
+        <section class="plateria-menu-section">
+            <div class="plateria-menu-grid" id="plateriaMenuGrid">
+                <!-- Items inserted by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="site-footer">
+        <div class="footer-cta-section">
+            <div class="cta-food-img cta-food-left">
+                <img src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80" alt="Fried Chicken" loading="lazy">
+            </div>
+            <div class="cta-content">
+                <span class="cta-label">RESERVE YOUR SPOT TODAY</span>
+                <h2>Ready to indulge in a<br>memorable <em>meal?</em></h2>
+                <p>Order now and enjoy a delightful dining experience with exceptional flavors</p>
+                <div class="cta-actions">
+                    <a href="index.html" class="btn-outline-white footer-cta-btn">Order Now</a>
+                    <div class="footer-cta-rating">
+                        <span>(4.9/5)</span>
+                        <span class="rating-stars">★★★★★</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-food-img cta-food-right">
+                <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" alt="Ice Cream" loading="lazy">
+            </div>
+        </div>
+        <div class="footer-main">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span class="footer-logo">Kartikeya</span>
+                    <p>Premium Ice Creams & Crispy Fried Chicken serving happiness since day one.</p>
+                    <div class="footer-social"><span>Follow us</span></div>
+                </div>
+                <div class="footer-col">
+                    <h5>Pages</h5>
+                    <a href="index.html">Home</a>
+                    <a href="menu.html">Menu</a>
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Categories</h5>
+                    <a href="index.html">Ice Creams</a>
+                    <a href="index.html">Shakes</a>
+                    <a href="index.html">Chicken</a>
+                    <a href="index.html">Combos</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Contact</h5>
+                    <a href="tel:7032944849">70329 44849</a>
+                    <a href="tel:9381084499">93810 84499</a>
+                    <a href="#">Kanchikacherla, AP</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Kartikeya Ice Creams & KKFC. All rights reserved.</p>
+                <p class="built-by">Built by <a href="https://uxitech.in" target="_blank" rel="noopener noreferrer"><strong>UXITECH</strong></a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ========== MENU DATA (same as main app) ==========
+    var menuData = {
+        icecream: {
+            name: 'Ice Creams', type: 'icecream', veg: true,
+            items: [
+                { name: 'Vanilla', price: '₹60 – ₹200', image: 'https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=400&q=80', veg: true },
+                { name: 'Strawberry', price: '₹60 – ₹200', image: 'https://images.unsplash.com/photo-1557142046-c704a3adf364?w=400&q=80', veg: true },
+                { name: 'Pista', price: '₹60 – ₹200', image: 'https://images.unsplash.com/photo-1629385701021-fcd568a743e8?w=400&q=80', veg: true },
+                { name: 'Mango', price: '₹70 – ₹240', image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400&q=80', veg: true },
+                { name: 'Butterscotch', price: '₹70 – ₹240', image: 'https://images.unsplash.com/photo-1580915411954-282cb1b0d780?w=400&q=80', veg: true },
+                { name: 'Sithaphal', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80', veg: true },
+                { name: 'Anjir', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&q=80', veg: true },
+                { name: 'Kulfi', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1633933358116-a27b902fad35?w=400&q=80', veg: true },
+                { name: 'American Nuts', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?w=400&q=80', veg: true },
+                { name: 'Nutty Caramel', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1560008581-09826d1de69e?w=400&q=80', veg: true },
+                { name: 'Oreo', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1576506295286-5cda18df43e7?w=400&q=80', veg: true },
+                { name: 'Fruit Salad', price: '₹100 – ₹340', image: 'https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=400&q=80', veg: true }
+            ]
+        },
+        shakes: {
+            name: 'Shakes', type: 'shakes', veg: true,
+            items: [
+                { name: 'Pineapple Shake', price: '₹89 – ₹149', image: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=400&q=80', veg: true },
+                { name: 'Guava Shake', price: '₹89 – ₹149', image: 'https://images.unsplash.com/photo-1638176066666-ffb2f013c7dd?w=400&q=80', veg: true },
+                { name: 'Mango Shake', price: '₹89 – ₹149', image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&q=80', veg: true },
+                { name: 'Tender Coconut', price: '₹89 – ₹149', image: 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?w=400&q=80', veg: true },
+                { name: 'Chikoo Shake', price: '₹89 – ₹149', image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80', veg: true },
+                { name: 'Jackfruit Shake', price: '₹99 – ₹169', image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=400&q=80', veg: true },
+                { name: 'Avocado Shake', price: '₹99 – ₹169', image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&q=80', veg: true },
+                { name: 'Rose Milk', price: '₹49', image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400&q=80', veg: true },
+                { name: 'Badam Milk', price: '₹49', image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80', veg: true }
+            ]
+        },
+        chicken: {
+            name: 'Chicken', type: 'chicken', veg: false,
+            items: [
+                { name: 'Crispy Wings', price: '₹149 – ₹398', image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80', veg: false },
+                { name: 'Drumsticks', price: '₹329 – ₹950', image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80', veg: false },
+                { name: 'Chicken Popcorn', price: '₹149 – ₹398', image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80', veg: false },
+                { name: 'Boneless Strips', price: '₹149 – ₹398', image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80', veg: false },
+                { name: 'French Fries', price: '₹129 – ₹339', image: 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=400&q=80', veg: true },
+                { name: 'Spring Potato', price: '₹50', image: 'https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&q=80', veg: true }
+            ]
+        },
+        combos: {
+            name: 'Combos', type: 'combos', veg: false,
+            items: [
+                { name: 'Super Special Combo', price: '₹1,099', image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=400&q=80', veg: false },
+                { name: 'Family Bucket', price: '₹839', image: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80', veg: false },
+                { name: 'Big Bucket', price: '₹699', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&q=80', veg: false },
+                { name: 'Mini Bucket', price: '₹419', image: 'https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=400&q=80', veg: false },
+                { name: 'Prawn Balls', price: '₹200', image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', veg: false },
+                { name: 'Fish Fingers', price: '₹200', image: 'https://images.unsplash.com/photo-1604909052743-94e838986d24?w=400&q=80', veg: false },
+                { name: 'Shrimp Rolls', price: '₹200', image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', veg: false },
+                { name: 'Shrimp Samosa', price: '₹250', image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', veg: false }
+            ]
+        }
+    };
+
+    // ========== RENDER ITEMS ==========
+    function renderItems(filter) {
+        var grid = document.getElementById('plateriaMenuGrid');
+        grid.innerHTML = '';
+        var index = 0;
+
+        Object.keys(menuData).forEach(function(catKey) {
+            if (filter !== 'all' && filter !== catKey) return;
+            menuData[catKey].items.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'plateria-item';
+                div.style.animationDelay = (index * 0.06) + 's';
+                var dotClass = item.veg ? 'veg' : 'nonveg';
+                div.innerHTML =
+                    '<div class="plateria-item-img">' +
+                        '<img src="' + item.image + '" alt="' + item.name + '" loading="lazy">' +
+                    '</div>' +
+                    '<div class="plateria-item-name">' +
+                        item.name +
+                        ' <span class="veg-dot ' + dotClass + '"></span>' +
+                    '</div>' +
+                    '<div class="plateria-item-price">' + item.price + '</div>';
+                grid.appendChild(div);
+                index++;
+            });
+        });
+    }
+
+    // ========== FILTER TABS (event delegation for reliability) ==========
+    var filterContainer = document.getElementById('filterTabs');
+    if (filterContainer) {
+        filterContainer.addEventListener('click', function(e) {
+            var tab = e.target.closest('.filter-tab');
+            if (!tab) return;
+            var allTabs = filterContainer.querySelectorAll('.filter-tab');
+            allTabs.forEach(function(t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+            renderItems(tab.getAttribute('data-filter'));
+        });
+    }
+
+    // Initial render
+    renderItems('all');
+
+    // ========== MOBILE TOUCH ROTATION ==========
+    function setupTouchRotation() {
+        var grid = document.getElementById('plateriaMenuGrid');
+        grid.addEventListener('touchstart', function(e) {
+            var item = e.target.closest('.plateria-item');
+            if (!item) return;
+            // Remove touched from all others
+            document.querySelectorAll('.plateria-item.touched').forEach(function(el) {
+                el.classList.remove('touched');
+            });
+            item.classList.add('touched');
+        }, { passive: true });
+
+        // Remove touched when tapping outside or scrolling
+        document.addEventListener('touchstart', function(e) {
+            if (!e.target.closest('.plateria-item')) {
+                document.querySelectorAll('.plateria-item.touched').forEach(function(el) {
+                    el.classList.remove('touched');
+                });
+            }
+        }, { passive: true });
+    }
+    setupTouchRotation();
+    </script>
+
+</body>
+</html>

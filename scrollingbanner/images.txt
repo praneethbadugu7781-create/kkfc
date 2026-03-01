@@ -1,0 +1,11 @@
+SCROLLING BANNER IMAGES
+=======================
+
+Images in this folder:
+
+1. icecreame-banner.jpeg  - Kartikeya Ice Creams "Chill Your Mood" banner
+2. milkshake-banner.jpeg  - Kartikeya Milk Shakes "Fresh and Healthy" banner  
+3. combo-banner.jpeg      - Value Combos "bring everyone Together" banner
+4. chicken-banner.jpeg    - KKFC "Hot & Spicy" banner
+
+These images are used in the hero section auto-rotating banner slider.

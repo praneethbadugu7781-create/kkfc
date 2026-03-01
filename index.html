@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFFFFF">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="description" content="Kartikeya Ice Creams & KKFC - Premium Ice Creams and Crispy Fried Chicken">
+    <title>Kartikeya Ice Creams & KKFC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ========== TOP NAVIGATION (Plateria-style) ========== -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <span class="logo-text">Kartikeya</span>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-item active">Home</a>
+                <a href="menu.html" class="nav-item">Menu</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="contact.html" class="nav-item">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <button class="nav-item cart-link" data-tab="cart">
+                    <div class="cart-badge" id="cartBadge">0</div>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </button>
+                <button class="btn-primary-sm" id="orderNowBtn">Order Now</button>
+            </div>
+        </div>
+        <!-- Search Bar -->
+        <div class="header-search">
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search ice creams, chicken & more...">
+                <button class="search-clear" id="searchClear" aria-label="Clear search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content" id="mainContent">
+
+        <!-- ========== HERO SECTION ========== -->
+        <section class="hero-section" id="heroSection">
+            <div class="hero-bg-decor"></div>
+            <div class="hero-container">
+                <span class="tag-label">PREMIUM ICE CREAMS & FRIED CHICKEN</span>
+                <h1 class="hero-title">Where every bite is a flavor <em>masterpiece</em></h1>
+                <p class="hero-subtitle">We bring you the finest flavors, carefully crafted with the freshest ingredients & every meal</p>
+                <div class="hero-actions">
+                    <a href="#categorySection" class="btn-primary hero-cta" onclick="document.getElementById('categorySection').scrollIntoView({behavior:'smooth'}); return false;">
+                        Explore Menu
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                    </a>
+                    <div class="hero-rating">
+                        <span class="rating-stars">★★★★★</span>
+                        <span class="rating-text">(4.9/5)</span>
+                    </div>
+                </div>
+                <div class="hero-tabs">
+                    <a href="?cat=icecream" onclick="event.preventDefault();showMenu('icecream')" class="category-card hero-tab-btn" role="button">Ice Creams</a>
+                    <a href="?cat=shakes" onclick="event.preventDefault();showMenu('shakes')" class="category-card hero-tab-btn" role="button">Shakes</a>
+                    <a href="?cat=chicken" onclick="event.preventDefault();showMenu('chicken')" class="category-card hero-tab-btn" role="button">Chicken</a>
+                    <a href="?cat=combos" onclick="event.preventDefault();showMenu('combos')" class="category-card hero-tab-btn" role="button">Combos</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== OFFERS / DEALS STRIP ========== -->
+        <section class="offers-strip" id="offersStrip" style="display:none;">
+            <div class="section-container">
+                <div class="offers-strip-header">
+                    <span class="tag-label on-light">🔥 DEALS & OFFERS</span>
+                    <h2 class="section-heading">Today's special offers</h2>
+                </div>
+                <div class="offers-scroll" id="offersScroll">
+                    <!-- Populated dynamically from Firestore -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CATEGORY / MENU SECTION ========== -->
+        <section class="category-section" id="categorySection">
+            <div class="section-container">
+
+                <div class="section-header-center">
+                    <span class="tag-label on-light">THIS IS WHAT WE SERVE YOU</span>
+                    <h2 class="section-heading">Discover the perfect taste for every mood</h2>
+                </div>
+
+                <!-- Category Cards (Plateria oval capsule style) -->
+                <div class="category-grid">
+                    <div class="cat-card" onclick="showMenu('icecream')" style="cursor:pointer">
+                        <div class="cat-card-img">
+                            <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=600&q=80" alt="Ice Creams" loading="lazy">
+                            <span class="cat-badge">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="cat-card-name">Ice Creams</h3>
+                    </div>
+                    <span class="cat-dot"></span>
+                    <div class="cat-card" onclick="showMenu('shakes')" style="cursor:pointer">
+                        <div class="cat-card-img">
+                            <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80" alt="Shakes" loading="lazy">
+                            <span class="cat-badge">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M18.06 22.99h.01c.27-.18.5-.41.69-.69l.01-.02c.18-.27.33-.57.44-.88.1-.3.17-.61.2-.93.03-.31.03-.63 0-.94-.03-.32-.1-.63-.2-.93-.11-.31-.26-.6-.44-.88l-.01-.02c-.19-.28-.42-.5-.69-.69h-.01c-.27-.18-.57-.33-.88-.44-.3-.1-.61-.17-.93-.2-.31-.03-.63-.03-.94 0-.32.03-.63.1-.93.2-.31.11-.6.26-.88.44l-.02.01c-.28.19-.5.42-.69.69h-.01c-.18.27-.33.57-.44.88-.1.3-.17.61-.2.93-.03.31-.03.63 0 .94.03.32.1.63.2.93.11.31.26.6.44.88l.01.02c.19.28.42.51.69.69h.01c.27.18.57.33.88.44.3.1.61.17.93.2.31.03.63.03.94 0 .32-.03.63-.1.93-.2.31-.11.6-.26.88-.44zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="cat-card-name">Shakes</h3>
+                    </div>
+                    <span class="cat-dot"></span>
+                    <div class="cat-card" onclick="showMenu('chicken')" style="cursor:pointer">
+                        <div class="cat-card-img">
+                            <img src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=600&q=80" alt="Chicken" loading="lazy">
+                            <span class="cat-badge">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8.1 13.34l2.83-2.83L3.91 3.5a4.008 4.008 0 000 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="cat-card-name">Chicken</h3>
+                    </div>
+                    <span class="cat-dot"></span>
+                    <div class="cat-card" onclick="showMenu('combos')" style="cursor:pointer">
+                        <div class="cat-card-img">
+                            <img src="https://images.unsplash.com/photo-1562967914-608f82629710?w=600&q=80" alt="Combos" loading="lazy">
+                            <span class="cat-badge">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="cat-card-name">Combos</h3>
+                    </div>
+                </div>
+
+                <!-- Why Choose (Plateria split layout: features left + image right) -->
+                <div class="why-section">
+                    <div class="section-header-center">
+                        <span class="tag-label on-light">DISCOVER WHAT MAKES US SPECIAL</span>
+                        <h2 class="section-heading">Why choose Kartikeya for your dining expertise</h2>
+                    </div>
+                    <div class="why-layout">
+                        <!-- LEFT — 2×3 features grid -->
+                        <div class="why-features">
+                            <div class="why-feature">
+                                <div class="why-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.1 13.34l2.83-2.83L3.91 3.5a4.008 4.008 0 000 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/></svg>
+                                </div>
+                                <div class="why-feature-text">
+                                    <h4>Fresh Ingredients</h4>
+                                    <p>Only the freshest ingredients are used in our dishes daily</p>
+                                </div>
+                            </div>
+                            <div class="why-feature">
+                                <div class="why-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z"/><circle cx="18" cy="4" r="2.5"/></svg>
+                                </div>
+                                <div class="why-feature-text">
+                                    <h4>Creative Plating</h4>
+                                    <p>Every meal is beautifully plated, showcasing our culinary art</p>
+                                </div>
+                            </div>
+                            <div class="why-feature">
+                                <div class="why-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 12.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                </div>
+                                <div class="why-feature-text">
+                                    <h4>Artisan Recipes</h4>
+                                    <p>Each dish is made with our unique, handcrafted artisan recipes</p>
+                                </div>
+                            </div>
+                            <div class="why-feature">
+                                <div class="why-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+                                </div>
+                                <div class="why-feature-text">
+                                    <h4>Locally Sourced</h4>
+                                    <p>We work with local farmers to bring the best ingredients</p>
+                                </div>
+                            </div>
+                            <div class="why-feature">
+                                <div class="why-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.21 9l-4.38-6.56c-.19-.28-.51-.42-.83-.42-.32 0-.64.14-.83.43L6.79 9C4.6 9 2.5 10.68 2.5 13c0 2.21 1.79 4 4 4 1.52 0 2.85-.86 3.53-2.12.68 1.26 2.01 2.12 3.53 2.12 2.21 0 4-1.79 4-4-.01-2.32-2.1-4-4.35-4z"/><path d="M12 22c4.97 0 9-4.03 9-9 0-.79-.11-1.56-.31-2.28-.09.04-.18.08-.27.12C19.68 11.58 19 12.22 19 13c0 1.1-.9 2-2 2s-2-.9-2-2c0-.78-.68-1.42-1.42-1.16-.09-.04-.18-.08-.27-.12-.2.72-.31 1.49-.31 2.28 0 4.97 4.03 9 9 9H12z" opacity="0"/></svg>
+                                </div>
+                                <div class="why-feature-text">
+                                    <h4>Sustainable Practices</h4>
+                                    <p>We focus on reducing food waste while supporting sustainability</p>
+                                </div>
+                            </div>
+                            <div class="why-feature">
+                                <div class="why-feature-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                                </div>
+                                <div class="why-feature-text">
+                                    <h4>Exceptional Service</h4>
+                                    <p>Delivering personalized service for an unforgettable dining experience</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- RIGHT — Large image -->
+                        <div class="why-image">
+                            <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80" alt="Professional Chef" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========== STATS STRIP ========== -->
+        <section class="stats-section" id="statsSection">
+            <div class="section-container">
+                <div class="stats-headline">
+                    <span class="stats-big-number" data-count="15000" data-suffix="+" data-comma="true">0</span>
+                    <span class="stats-big-label">ORDERS SERVED WITH HAPPINESS</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="10" data-suffix="K+">0</span>
+                        <span class="stat-label">Happy Customers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="45" data-suffix="+">0</span>
+                        <span class="stat-label">Menu Items</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="4.9" data-suffix="" data-decimal="true">0</span>
+                        <span class="stat-label">Customer Rating</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="2" data-suffix="+">0</span>
+                        <span class="stat-label">Years Experience</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== BANNER & FEATURES SECTION ========== -->
+        <section class="banner-section" id="bannerSliderSection">
+            <div class="section-container">
+
+                <!-- Two-column Plateria layout -->
+                <div class="banner-grid">
+                    <!-- LEFT — Photo slider -->
+                    <div class="banner-grid-left">
+                        <div class="banner-slider" id="bannerSlider">
+                            <div class="banner-track" id="bannerTrack">
+                                <div class="banner-slide" data-index="0">
+                                    <img src="scrollingbanner/icecreame-banner.jpeg" alt="Ice Cream Collection" loading="eager">
+                                </div>
+                                <div class="banner-slide" data-index="1">
+                                    <img src="scrollingbanner/milkshake-banner.jpeg" alt="Fresh Milk Shakes" loading="lazy">
+                                </div>
+                                <div class="banner-slide" data-index="2">
+                                    <img src="scrollingbanner/chicken-banner1.jpeg" alt="KKFC Chicken" loading="lazy">
+                                </div>
+                                <div class="banner-slide" data-index="3">
+                                    <img src="scrollingbanner/combo-banner.jpeg" alt="Value Combos" loading="lazy">
+                                </div>
+                            </div>
+                            <div class="banner-pagination" id="bannerPagination">
+                                <button class="pagination-dot active" data-slide="0" aria-label="Slide 1"></button>
+                                <button class="pagination-dot" data-slide="1" aria-label="Slide 2"></button>
+                                <button class="pagination-dot" data-slide="2" aria-label="Slide 3"></button>
+                                <button class="pagination-dot" data-slide="3" aria-label="Slide 4"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT — Text + Location card -->
+                    <div class="banner-grid-right">
+                        <span class="banner-label">
+                            <span class="banner-leaf">&#127807;</span>
+                            Best Dining Experience
+                            <span class="banner-leaf">&#127807;</span>
+                        </span>
+                        <h2 class="banner-heading">Best dining<br>experience with<br>every dish</h2>
+                        <p class="banner-body">We believe food is more than just a meal; it's an experience. Our chefs create dishes that combine the freshest ingredients with authentic flavours.</p>
+
+                        <!-- Orange location card -->
+                        <div class="location-card">
+                            <div class="location-card-thumb">
+                                <img src="scrollingbanner/icecreame-banner.jpeg" alt="KKFC">
+                            </div>
+                            <div class="location-card-info">
+                                <span class="location-card-name">Kartikeya Ice Creams &amp; KKFC</span>
+                                <a href="#" class="location-card-map" id="viewMapBtn">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    View on Map
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Numbered Features (Plateria 01, 02, 03) -->
+                <div class="numbered-features">
+                    <div class="num-feature">
+                        <div class="num-badge">01</div>
+                        <div class="num-text">
+                            <h4>Premium Quality</h4>
+                            <p>We take pride in offering an array of dishes made with love & quality</p>
+                        </div>
+                    </div>
+                    <div class="num-feature">
+                        <div class="num-badge">02</div>
+                        <div class="num-text">
+                            <h4>Fresh & Crispy</h4>
+                            <p>Our restaurant provides the perfect setting to enjoy your food</p>
+                        </div>
+                    </div>
+                    <div class="num-feature">
+                        <div class="num-badge">03</div>
+                        <div class="num-text">
+                            <h4>Quick Service</h4>
+                            <p>Our team is dedicated to making your dining experience smooth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== MENU SECTION (Hidden, shown on category click) ========== -->
+        <section class="menu-section" id="menuSection">
+            <div class="section-container">
+                <div class="menu-nav">
+                    <button class="back-btn" id="backToCategories">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        Back
+                    </button>
+                </div>
+                <div class="section-header-center">
+                    <span class="tag-label on-light">THIS IS WHAT WE SERVE YOU</span>
+                    <h2 class="menu-title section-heading" id="menuTitle">Menu</h2>
+                </div>
+                <div class="menu-list" id="menuList">
+                    <!-- Menu items dynamically inserted by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SEARCH RESULTS (Hidden) ========== -->
+        <section class="search-results-section" id="searchResultsSection">
+            <div class="section-container">
+                <div class="search-results-header">
+                    <h3 class="section-heading">Search Results</h3>
+                    <button class="btn-outline-sm" id="clearSearchBtn">Clear</button>
+                </div>
+                <div class="menu-list" id="searchResultsList">
+                    <!-- Search results dynamically inserted by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== CART PANEL ========== -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h3 class="cart-title">Your Cart</h3>
+            <button class="cart-close" id="cartClose" aria-label="Close cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty" id="cartEmpty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <p>Your cart is empty</p>
+                <span>Add some delicious items</span>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter">
+            <div class="cart-subtotal">
+                <span>Subtotal</span>
+                <span class="subtotal-amount" id="subtotalAmount">0.00</span>
+            </div>
+            <button class="btn-outline cart-add-more" id="addMoreBtn">Add More Items</button>
+            <button class="btn-primary checkout-btn" id="checkoutBtn">Proceed to Order</button>
+        </div>
+    </aside>
+
+    <!-- ========== CHECKOUT MODAL ========== -->
+    <div class="modal-overlay" id="checkoutOverlay"></div>
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-header">
+            <button class="modal-back" id="checkoutBack">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <h3 class="checkout-title">Checkout</h3>
+        </div>
+        <div class="checkout-content">
+            <div class="order-summary">
+                <h4>Order Summary</h4>
+                <div class="summary-items" id="checkoutSummary"></div>
+                <div class="summary-total">
+                    <span>Total Amount</span>
+                    <span class="total-amount" id="checkoutTotal">0.00</span>
+                </div>
+            </div>
+            <form class="checkout-form" id="checkoutForm">
+                <h4>Delivery Details</h4>
+                <div class="form-group">
+                    <label for="customerName">Full Name *</label>
+                    <input type="text" id="customerName" name="name" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="customerPhone">Phone Number *</label>
+                    <input type="tel" id="customerPhone" name="phone" required placeholder="Enter your phone number">
+                </div>
+                <div class="form-group">
+                    <label for="deliveryLocation">Delivery Location *</label>
+                    <input type="text" id="deliveryLocation" name="location" required placeholder="Enter delivery address">
+                </div>
+                <div class="form-group">
+                    <label for="orderNotes">Notes (Optional)</label>
+                    <textarea id="orderNotes" name="notes" placeholder="Any special instructions..." rows="3"></textarea>
+                </div>
+
+                <!-- ========== PAYMENT METHOD ========== -->
+                <h4>Payment Method</h4>
+                <div class="payment-methods" id="paymentMethods">
+                    <label class="payment-option selected" data-method="upi">
+                        <input type="radio" name="paymentMethod" value="upi" checked>
+                        <div class="payment-option-inner">
+                            <div class="payment-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                            </div>
+                            <div class="payment-info">
+                                <span class="payment-name">UPI Payment</span>
+                                <span class="payment-desc">Pay via GPay, PhonePe, Paytm etc.</span>
+                            </div>
+                            <span class="payment-check">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            </span>
+                        </div>
+                    </label>
+                    <label class="payment-option" data-method="cod">
+                        <input type="radio" name="paymentMethod" value="cod">
+                        <div class="payment-option-inner">
+                            <div class="payment-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                            </div>
+                            <div class="payment-info">
+                                <span class="payment-name">Cash on Delivery</span>
+                                <span class="payment-desc">Pay when your order arrives</span>
+                            </div>
+                            <span class="payment-check">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            </span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- UPI Payment Section (shown when UPI selected) -->
+                <div class="upi-payment-section" id="upiPaymentSection">
+                    <div class="upi-qr-container">
+                        <div class="upi-qr-box" id="upiQrBox">
+                            <img id="upiQrImage" alt="UPI QR Code" loading="eager">
+                            <p class="upi-amount" id="upiAmount"></p>
+                        </div>
+                        <p class="upi-instruction">Scan this QR code with any UPI app to pay</p>
+                        <div class="upi-id-display">
+                            <span>UPI ID:</span>
+                            <strong id="upiIdDisplay">9381084499-2@ybl</strong>
+                            <button type="button" class="upi-copy-btn" id="upiCopyBtn" title="Copy UPI ID">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="upi-pay-methods">
+                        <div class="upi-method-note">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                            <span>Scan QR with any UPI app <strong>or</strong> copy the UPI ID above & pay manually</span>
+                        </div>
+                    </div>
+                    <label class="upi-confirm-check" id="upiConfirmLabel">
+                        <input type="checkbox" id="upiConfirmCheckbox">
+                        <span class="upi-confirm-text">I have completed the UPI payment</span>
+                    </label>
+                    <div class="upi-screenshot-section" id="upiScreenshotSection" style="display:none;">
+                        <label class="upi-screenshot-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            Upload Payment Screenshot *
+                        </label>
+                        <div class="upi-upload-area" id="upiUploadArea">
+                            <input type="file" id="upiScreenshotInput" accept="image/*" capture="environment" style="display:none;">
+                            <div class="upi-upload-placeholder" id="upiUploadPlaceholder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="32" height="32"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <span>Tap to upload screenshot</span>
+                                <small>Take a screenshot from your UPI app</small>
+                            </div>
+                            <div class="upi-upload-preview" id="upiUploadPreview" style="display:none;">
+                                <img id="upiScreenshotPreview" alt="Payment screenshot">
+                                <button type="button" class="upi-remove-btn" id="upiRemoveScreenshot" title="Remove">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="upi-screenshot-hint">Open your UPI app → Go to payment history → Screenshot the transaction</p>
+                        <p class="upi-verify-warning">⚠️ Your payment screenshot will be verified before order dispatch</p>
+                    </div>
+                </div>
+
+                <div class="checkout-actions">
+                    <button type="submit" class="btn-primary confirm-btn" id="confirmOrderBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+                        <span id="confirmBtnText">Confirm Order via WhatsApp</span>
+                    </button>
+                    <button type="button" class="btn-outline" id="addMoreCheckout">Add More Items</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== ITEM CUSTOMIZATION MODAL ========== -->
+    <div class="modal-overlay" id="customizeOverlay"></div>
+    <div class="customize-modal" id="customizeModal">
+        <div class="customize-header">
+            <button class="modal-close-btn" id="customizeClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="customize-content">
+            <div class="customize-item-info">
+                <img src="" alt="" class="customize-item-image" id="customizeImage">
+                <div class="customize-item-details">
+                    <h3 class="customize-item-name" id="customizeName">Item Name</h3>
+                    <p class="customize-item-desc" id="customizeDesc">Description</p>
+                </div>
+            </div>
+            <div class="variant-selection" id="variantSelection">
+                <h4 class="selection-title">Select Size</h4>
+                <div class="variant-options" id="variantOptions"></div>
+            </div>
+            <div class="quantity-selection">
+                <h4 class="selection-title">Quantity</h4>
+                <div class="quantity-controls">
+                    <button class="qty-btn" id="customizeQtyMinus">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <span class="qty-value" id="customizeQtyValue">1</span>
+                    <button class="qty-btn" id="customizeQtyPlus">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="customize-footer">
+                <div class="customize-total">
+                    <span>Total</span>
+                    <span class="customize-total-amount" id="customizeTotalAmount">0.00</span>
+                </div>
+                <button class="btn-primary add-to-cart-btn" id="addToCartBtn">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER (Plateria-style) ========== -->
+    <footer class="site-footer">
+        <div class="footer-cta-section">
+            <div class="cta-food-img cta-food-left">
+                <img src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80" alt="Fried Chicken" loading="lazy">
+            </div>
+            <div class="cta-content">
+                <span class="cta-label">RESERVE YOUR SPOT TODAY</span>
+                <h2>Ready to indulge in a<br>memorable <em>meal?</em></h2>
+                <p>Order now and enjoy a delightful dining experience with exceptional flavors</p>
+                <div class="cta-actions">
+                    <a href="#" class="btn-outline-white footer-cta-btn" onclick="document.getElementById('categorySection').scrollIntoView({behavior:'smooth'}); return false;">
+                        Order Now
+                    </a>
+                    <div class="footer-cta-rating">
+                        <span>(4.9/5)</span>
+                        <span class="rating-stars">★★★★★</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-food-img cta-food-right">
+                <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" alt="Ice Cream" loading="lazy">
+            </div>
+        </div>
+        <div class="footer-main">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span class="footer-logo">Kartikeya</span>
+                    <p>Premium Ice Creams & Crispy Fried Chicken serving happiness since day one.</p>
+                    <div class="footer-social">
+                        <span>Follow us</span>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h5>Pages</h5>
+                    <a href="index.html">Home</a>
+                    <a href="menu.html">Menu</a>
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Categories</h5>
+                    <a href="#" onclick="showMenu('icecream'); return false;">Ice Creams</a>
+                    <a href="#" onclick="showMenu('shakes'); return false;">Shakes</a>
+                    <a href="#" onclick="showMenu('chicken'); return false;">Chicken</a>
+                    <a href="#" onclick="showMenu('combos'); return false;">Combos</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Contact</h5>
+                    <a href="tel:7032944849">70329 44849</a>
+                    <a href="tel:9381084499">93810 84499</a>
+                    <a href="#">Kanchikacherla, AP</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Kartikeya Ice Creams & KKFC. All rights reserved.</p>
+                <p class="built-by">Built by <a href="https://uxitech.in" target="_blank" rel="noopener noreferrer"><strong>UXITECH</strong></a></p>
+                <a href="admin.html" style="font-size:0.65rem;color:#777;text-decoration:none;margin-top:4px;display:inline-block;">Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Screenshot Reminder Popup -->
+    <div class="ss-reminder-overlay" id="ssReminderOverlay" style="display:none;">
+        <div class="ss-reminder-modal">
+            <div class="ss-reminder-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h3>Share Your Screenshot!</h3>
+            <p>Please send your <strong>payment screenshot</strong> in the WhatsApp chat so we can verify and confirm your order quickly.</p>
+            <button class="btn-primary ss-reminder-btn" id="ssReminderClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                Got it!
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <script src="js/app.js?v=16"></script>
+    <script>
+    // ========== COUNTER ANIMATION — CONTINUOUS LOOP ==========
+    (function() {
+        var started = false;
+        function formatNum(n, comma) {
+            if (!comma) return n.toString();
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        function runCounter(el) {
+            var target = parseFloat(el.getAttribute('data-count'));
+            var suffix = el.getAttribute('data-suffix') || '';
+            var isDecimal = el.getAttribute('data-decimal') === 'true';
+            var useComma = el.getAttribute('data-comma') === 'true';
+            var duration = 2200;
+            var pause = 1500;
+            var startTime = null;
+            function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                var progress = Math.min((timestamp - startTime) / duration, 1);
+                var ease = 1 - Math.pow(1 - progress, 3);
+                var current = target * ease;
+                if (isDecimal) {
+                    el.textContent = current.toFixed(1) + suffix;
+                } else {
+                    el.textContent = formatNum(Math.floor(current), useComma) + suffix;
+                }
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    if (isDecimal) {
+                        el.textContent = target.toFixed(1) + suffix;
+                    } else {
+                        el.textContent = formatNum(target, useComma) + suffix;
+                    }
+                    setTimeout(function() {
+                        el.textContent = isDecimal ? '0.0' + suffix : '0' + suffix;
+                        startTime = null;
+                        requestAnimationFrame(step);
+                    }, pause);
+                }
+            }
+            requestAnimationFrame(step);
+        }
+        function startCounters() {
+            if (started) return;
+            var section = document.getElementById('statsSection');
+            if (!section) return;
+            var rect = section.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 0.85 && rect.bottom > 0) {
+                started = true;
+                section.querySelectorAll('[data-count]').forEach(runCounter);
+            }
+        }
+        window.addEventListener('scroll', startCounters, { passive: true });
+        window.addEventListener('load', startCounters);
+    })();
+    </script>
+</body>
+</html>

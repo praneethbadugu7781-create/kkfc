@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="description" content="Contact Kartikeya Ice Creams & KKFC - Reach out for queries and orders">
+    <title>Contact - Kartikeya Ice Creams & KKFC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ========== TOP NAVIGATION ========== -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <a href="index.html" class="logo-text">Kartikeya</a>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-item">Home</a>
+                <a href="menu.html" class="nav-item">Menu</a>
+                <a href="about.html" class="nav-item">About</a>
+                <a href="contact.html" class="nav-item active">Contact</a>
+            </nav>
+            <div class="header-actions">
+                <a href="index.html" class="btn-primary-sm">Order Now</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content page-content">
+
+        <!-- ========== CONTACT HEADER ========== -->
+        <section class="contact-hero">
+            <div class="section-container">
+                <div class="section-header-center">
+                    <span class="tag-label on-light">WE ARE HERE !!</span>
+                    <h2 class="section-heading">Order your food &amp; enjoy<br>a memorable meal</h2>
+                    <p class="section-desc">Come experience a world of rich flavors, cozy ambiance, and dishes crafted with love &amp; moments</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CONTACT CARD (Image + Form) ========== -->
+        <section class="contact-card-section">
+            <div class="section-container">
+                <div class="plateria-contact-card">
+                    <!-- LEFT — Image -->
+                    <div class="contact-card-image">
+                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80" alt="Dining Experience" loading="lazy">
+                    </div>
+                    <!-- RIGHT — Form -->
+                    <div class="contact-card-form">
+                        <form class="plateria-form" id="messageForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="queryName">Full Name</label>
+                                    <input type="text" id="queryName" name="name" required placeholder="Please enter your full name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="queryPhone">Phone Number</label>
+                                    <input type="tel" id="queryPhone" name="phone" required placeholder="Please enter your phone number">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="queryGuests">Number of Guests</label>
+                                    <input type="number" id="queryGuests" name="guests" min="1" max="10" placeholder="Number of guests attending (1-10)">
+                                </div>
+                                <div class="form-group">
+                                    <label for="queryDate">Pick your date:</label>
+                                    <input type="date" id="queryDate" name="date">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="queryOccasion">Occasion/Event type</label>
+                                <select id="queryOccasion" name="occasion">
+                                    <option value="" disabled selected>Select...</option>
+                                    <option value="birthday">Birthday</option>
+                                    <option value="anniversary">Anniversary</option>
+                                    <option value="family">Family Gathering</option>
+                                    <option value="friends">Friends Meetup</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="queryMessage">Special Requests</label>
+                                <textarea id="queryMessage" name="message" placeholder="Please provide any special requests or dietary preferences" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary submit-btn">
+                                Submit your request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Contact Info Row -->
+                <div class="contact-info-row">
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon phone-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        </div>
+                        <div>
+                            <strong>Phone Number</strong>
+                            <p><a href="tel:7032944849">70329 44849</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon email-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </div>
+                        <div>
+                            <strong>Email Address</strong>
+                            <p><a href="mailto:kartikeyaicecreams@gmail.com">kartikeyaicecreams@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon location-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        </div>
+                        <div>
+                            <strong>Location</strong>
+                            <p>Kanchikacherla, AP</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="site-footer">
+        <div class="footer-cta-section">
+            <div class="cta-food-img cta-food-left">
+                <img src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80" alt="Fried Chicken" loading="lazy">
+            </div>
+            <div class="cta-content">
+                <span class="cta-label">RESERVE YOUR SPOT TODAY</span>
+                <h2>Ready to indulge in a<br>memorable <em>meal?</em></h2>
+                <p>Order now and enjoy a delightful dining experience with exceptional flavors</p>
+                <div class="cta-actions">
+                    <a href="index.html" class="btn-outline-white footer-cta-btn">
+                        Order Now
+                    </a>
+                    <div class="footer-cta-rating">
+                        <span>(4.9/5)</span>
+                        <span class="rating-stars">★★★★★</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cta-food-img cta-food-right">
+                <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" alt="Ice Cream" loading="lazy">
+            </div>
+        </div>
+        <div class="footer-main">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span class="footer-logo">Kartikeya</span>
+                    <p>Premium Ice Creams & Crispy Fried Chicken serving happiness since day one.</p>
+                    <div class="footer-social">
+                        <span>Follow us</span>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h5>Pages</h5>
+                    <a href="index.html">Home</a>
+                    <a href="menu.html">Menu</a>
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Categories</h5>
+                    <a href="index.html">Ice Creams</a>
+                    <a href="index.html">Shakes</a>
+                    <a href="index.html">Chicken</a>
+                    <a href="index.html">Combos</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Contact</h5>
+                    <a href="tel:7032944849">70329 44849</a>
+                    <a href="tel:9381084499">93810 84499</a>
+                    <a href="#">Kanchikacherla, AP</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Kartikeya Ice Creams & KKFC. All rights reserved.</p>
+                <p class="built-by">Built by <a href="https://uxitech.in" target="_blank" rel="noopener noreferrer"><strong>UXITECH</strong></a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Contact form — send via WhatsApp
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const name = formData.get('name') || '';
+            const phone = formData.get('phone') || '';
+            const guests = formData.get('guests') || '';
+            const date = formData.get('date') || '';
+            const occasion = formData.get('occasion') || '';
+            const message = formData.get('message') || '';
+            let queryMessage = `Booking Request - Kartikeya Ice Creams & KKFC\n\nName: ${name}\nPhone: ${phone}\nGuests: ${guests}\nDate: ${date}\nOccasion: ${occasion}\n\nSpecial Requests:\n${message}\n`;
+            const encodedMessage = encodeURIComponent(queryMessage);
+            const whatsappUrl = `https://wa.me/919959593027?text=${encodedMessage}`;
+            this.reset();
+            window.open(whatsappUrl, '_blank');
+        });
+    </script>
+
+</body>
+</html>
