@@ -5,12 +5,5 @@
     "start_url": "/",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#E8772A",
-    "icons": [
-        {
-            "src": "/favicon.ico",
-            "sizes": "64x64",
-            "type": "image/x-icon"
-        }
-    ]
+    "theme_color": "#E8772A"
 }

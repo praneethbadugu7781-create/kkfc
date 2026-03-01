@@ -1,0 +1,2 @@
+# WWW to non-WWW redirect (prevents duplicate content indexing)
+https://www.kartikeyakkfcfoods.in/* https://kartikeyakkfcfoods.in/:splat 301
