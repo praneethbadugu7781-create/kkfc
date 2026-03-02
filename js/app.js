@@ -1495,7 +1495,7 @@ function processOrder(e) {
     
     // Encode and redirect to WhatsApp
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/919959593027?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/917032944849?text=${encodedMessage}`;
     
     // ===== SAVE ORDER TO FIRESTORE =====
     try {
