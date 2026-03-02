@@ -4,10 +4,10 @@
   Referrer-Policy: strict-origin-when-cross-origin
 
 /css/*
-  Cache-Control: public, max-age=31536000
+  Cache-Control: public, max-age=3600
 
 /js/*
-  Cache-Control: public, max-age=31536000
+  Cache-Control: public, max-age=3600
 
 /scrollingbanner/*
-  Cache-Control: public, max-age=31536000
+  Cache-Control: public, max-age=86400
