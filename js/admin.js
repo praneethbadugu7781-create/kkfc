@@ -279,7 +279,8 @@ function stopListeners() {
 // ========== DASHBOARD STATS ==========
 function updateDashboardStats() {
     document.getElementById('statMenuItems').textContent = allMenuItems.length;
-    document.getElementById('statActiveOffers').textContent = allOffers.filter(function(o) { return o.active; }).length;
+    var activeOffers = allOffers.filter(function(o) { return o.active; }).length;
+    document.getElementById('statActiveOffers').textContent = activeOffers;
     document.getElementById('statTotalOrders').textContent = allOrders.length;
 
     var today = new Date().toISOString().split('T')[0];
@@ -289,6 +290,47 @@ function updateDashboardStats() {
         return d.toISOString().split('T')[0] === today;
     });
     document.getElementById('statTodayOrders').textContent = todayOrders.length;
+
+    // Dashboard greeting based on time
+    var greetEl = document.getElementById('dashGreeting');
+    if (greetEl) {
+        var hour = new Date().getHours();
+        var greeting = hour < 12 ? 'Good morning!' : hour < 17 ? 'Good afternoon!' : 'Good evening!';
+        greetEl.textContent = greeting;
+    }
+
+    // Animate stat bar fills
+    var maxMenu = 50, maxOffers = 10, maxOrders = 100, maxToday = 20;
+    setStatBarWidth('statMenuItems', allMenuItems.length, maxMenu);
+    setStatBarWidth('statActiveOffers', activeOffers, maxOffers);
+    setStatBarWidth('statTotalOrders', allOrders.length, maxOrders);
+    setStatBarWidth('statTodayOrders', todayOrders.length, maxToday);
+
+    // Update filter counts
+    updateFilterCounts();
+}
+
+function setStatBarWidth(statId, value, max) {
+    var el = document.getElementById(statId);
+    if (!el) return;
+    var card = el.closest('.stat-card');
+    if (!card) return;
+    var fill = card.querySelector('.stat-bar-fill');
+    if (fill) fill.style.width = Math.min((value / max) * 100, 100) + '%';
+}
+
+function updateFilterCounts() {
+    var counts = { all: allMenuItems.length, icecream: 0, shakes: 0, chicken: 0, combos: 0, protein: 0 };
+    allMenuItems.forEach(function(item) {
+        if (counts[item.category] !== undefined) counts[item.category]++;
+    });
+    var map = { all: 'countAll', icecream: 'countIcecream', shakes: 'countShakes', chicken: 'countChicken', combos: 'countCombos', protein: 'countProtein' };
+    Object.keys(map).forEach(function(key) {
+        var el = document.getElementById(map[key]);
+        if (el) el.textContent = counts[key];
+    });
+    var countEl = document.getElementById('menuItemCount');
+    if (countEl) countEl.textContent = allMenuItems.length + ' items';
 }
 
 // ========== MENU MANAGEMENT ==========
@@ -324,11 +366,40 @@ function setupMenuTab() {
         e.preventDefault();
         saveMenuItem();
     });
+
+    // Menu search
+    var searchInput = document.getElementById('adminMenuSearch');
+    var searchClear = document.getElementById('adminSearchClear');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            if (searchClear) searchClear.style.display = this.value ? 'flex' : 'none';
+            renderMenuGrid();
+        });
+    }
+    if (searchClear) {
+        searchClear.addEventListener('click', function() {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            searchInput.focus();
+            renderMenuGrid();
+        });
+    }
 }
 
 function renderMenuGrid() {
     var grid = document.getElementById('adminMenuGrid');
     var items = currentFilter === 'all' ? allMenuItems : allMenuItems.filter(function(i) { return i.category === currentFilter; });
+
+    // Apply search filter
+    var searchInput = document.getElementById('adminMenuSearch');
+    var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    if (query) {
+        items = items.filter(function(i) {
+            return (i.name && i.name.toLowerCase().indexOf(query) !== -1) ||
+                   (i.desc && i.desc.toLowerCase().indexOf(query) !== -1) ||
+                   (i.category && i.category.toLowerCase().indexOf(query) !== -1);
+        });
+    }
 
     if (items.length === 0) {
         grid.innerHTML = '<div class="loading-state">No items found. Click "Add Item" or "Seed Menu" to get started.</div>';
@@ -835,7 +906,7 @@ function viewOrder(orderId) {
         '<div>' +
             '<div class="order-info-block"><h4>Date</h4><p>' + dateStr + '</p></div>' +
             '<div class="order-info-block"><h4>Payment</h4><p>' + (order.paymentMethod || '—') + '</p></div>' +
-            '<div class="order-info-block"><h4>Total</h4><p style="font-size:1.2rem;font-weight:700;color:var(--admin-orange);">₹' + (order.total || 0) + '</p></div>' +
+            '<div class="order-info-block"><h4>Total</h4><p style="font-size:1.2rem;font-weight:700;color:var(--orange);">₹' + (order.total || 0) + '</p></div>' +
             '<div class="order-info-block"><h4>Status</h4><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></div>' +
         '</div>' +
     '</div>' +

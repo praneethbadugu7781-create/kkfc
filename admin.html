@@ -7,16 +7,19 @@
     <title>KKFC Admin Panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css?v=2">
 </head>
 <body>
 
     <!-- ========== LOGIN SCREEN ========== -->
     <div class="login-screen" id="loginScreen">
+        <div class="login-particles"></div>
         <div class="login-card">
             <div class="login-logo">
-                <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                <div class="login-logo-icon">
+                    <span>K</span>
+                </div>
                 <h1>KKFC Admin</h1>
                 <p>Manage your store, menu & orders</p>
             </div>
@@ -76,10 +79,13 @@
         <!-- Mobile Header -->
         <header class="mobile-header" id="mobileHeader">
             <button class="menu-toggle" id="menuToggle">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h16"/></svg>
             </button>
-            <span class="mobile-title">KKFC Admin</span>
-            <button class="mobile-logout" id="mobileLogoutBtn">
+            <div class="mobile-brand">
+                <span class="mobile-brand-icon">K</span>
+                <span class="mobile-title">KKFC Admin</span>
+            </div>
+            <button class="mobile-logout" id="mobileLogoutBtn" title="Sign out">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </button>
         </header>
@@ -89,46 +95,70 @@
 
             <!-- ===== DASHBOARD TAB ===== -->
             <section class="tab-content active" id="tab-dashboard">
-                <div class="page-header">
-                    <h2>Dashboard</h2>
-                    <p>Welcome back! Here's an overview of your store.</p>
+                <div class="dash-welcome">
+                    <div class="dash-welcome-text">
+                        <h2 id="dashGreeting">Good morning!</h2>
+                        <p>Here's what's happening with your store today.</p>
+                    </div>
+                    <div class="dash-quick-actions">
+                        <button class="quick-action-btn" onclick="switchTab('menu')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Add Item
+                        </button>
+                        <button class="quick-action-btn" onclick="switchTab('orders')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                            View Orders
+                        </button>
+                    </div>
                 </div>
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon orange">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <div class="stat-card stat-orange">
+                        <div class="stat-card-inner">
+                            <div class="stat-info">
+                                <span class="stat-value" id="statMenuItems">0</span>
+                                <span class="stat-label">Menu Items</span>
+                            </div>
+                            <div class="stat-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="statMenuItems">0</span>
-                            <span class="stat-label">Menu Items</span>
-                        </div>
+                        <div class="stat-bar"><div class="stat-bar-fill" style="width:75%"></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    <div class="stat-card stat-green">
+                        <div class="stat-card-inner">
+                            <div class="stat-info">
+                                <span class="stat-value" id="statActiveOffers">0</span>
+                                <span class="stat-label">Active Offers</span>
+                            </div>
+                            <div class="stat-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="statActiveOffers">0</span>
-                            <span class="stat-label">Active Offers</span>
-                        </div>
+                        <div class="stat-bar"><div class="stat-bar-fill" style="width:40%"></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                    <div class="stat-card stat-blue">
+                        <div class="stat-card-inner">
+                            <div class="stat-info">
+                                <span class="stat-value" id="statTotalOrders">0</span>
+                                <span class="stat-label">Total Orders</span>
+                            </div>
+                            <div class="stat-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="statTotalOrders">0</span>
-                            <span class="stat-label">Total Orders</span>
-                        </div>
+                        <div class="stat-bar"><div class="stat-bar-fill" style="width:60%"></div></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon purple">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <div class="stat-card stat-purple">
+                        <div class="stat-card-inner">
+                            <div class="stat-info">
+                                <span class="stat-value" id="statTodayOrders">0</span>
+                                <span class="stat-label">Today's Orders</span>
+                            </div>
+                            <div class="stat-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <span class="stat-value" id="statTodayOrders">0</span>
-                            <span class="stat-label">Today's Orders</span>
-                        </div>
+                        <div class="stat-bar"><div class="stat-bar-fill" style="width:30%"></div></div>
                     </div>
                 </div>
 
@@ -161,7 +191,7 @@
             <!-- ===== MENU ITEMS TAB ===== -->
             <section class="tab-content" id="tab-menu">
                 <div class="page-header">
-                    <h2>Menu Items</h2>
+                    <h2>Menu Items <span class="page-count" id="menuItemCount"></span></h2>
                     <div class="page-actions">
                         <button class="btn-primary" id="addMenuItemBtn">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -174,14 +204,21 @@
                     </div>
                 </div>
 
+                <!-- Search Bar -->
+                <div class="menu-search-bar">
+                    <svg class="menu-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="adminMenuSearch" placeholder="Search menu items..." autocomplete="off">
+                    <button class="menu-search-clear" id="adminSearchClear" style="display:none">&times;</button>
+                </div>
+
                 <!-- Category Filter -->
                 <div class="filter-bar">
-                    <button class="filter-btn active" data-cat="all">All</button>
-                    <button class="filter-btn" data-cat="icecream">Ice Creams</button>
-                    <button class="filter-btn" data-cat="shakes">Shakes</button>
-                    <button class="filter-btn" data-cat="chicken">Chicken</button>
-                    <button class="filter-btn" data-cat="combos">Combos</button>
-                    <button class="filter-btn" data-cat="protein">High Protein</button>
+                    <button class="filter-btn active" data-cat="all">All <span class="filter-count" id="countAll">0</span></button>
+                    <button class="filter-btn" data-cat="icecream">Ice Creams <span class="filter-count" id="countIcecream">0</span></button>
+                    <button class="filter-btn" data-cat="shakes">Shakes <span class="filter-count" id="countShakes">0</span></button>
+                    <button class="filter-btn" data-cat="chicken">Chicken <span class="filter-count" id="countChicken">0</span></button>
+                    <button class="filter-btn" data-cat="combos">Combos <span class="filter-count" id="countCombos">0</span></button>
+                    <button class="filter-btn" data-cat="protein">High Protein <span class="filter-count" id="countProtein">0</span></button>
                 </div>
 
                 <!-- Menu Items Grid -->
