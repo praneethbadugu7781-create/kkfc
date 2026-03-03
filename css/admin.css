@@ -1124,7 +1124,7 @@ body {
    ============================================================ */
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.25rem;
 }
 
@@ -1848,15 +1848,20 @@ body {
     .dash-quick-actions { width: 100%; }
     .quick-action-btn { flex: 1; justify-content: center; font-size: 0.78rem; padding: 0.5rem 0.75rem; }
 
-    .page-header { flex-direction: column; align-items: flex-start; }
+    .page-header { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
     .page-header h2 { font-size: 1.3rem; }
     .page-actions { width: 100%; display: flex; gap: 0.5rem; }
     .page-actions .btn-primary,
     .page-actions .btn-outline {
         flex: 1;
         justify-content: center;
-        padding: 0.58rem 0.65rem;
-        font-size: 0.78rem;
+        padding: 0.55rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    .page-actions .btn-primary svg,
+    .page-actions .btn-outline svg {
+        width: 14px;
+        height: 14px;
     }
 
     .form-row { grid-template-columns: 1fr; }
@@ -1926,9 +1931,24 @@ body {
 
     /* Menu card improvements */
     .menu-card-img { height: 150px; }
-    .menu-card-body { padding: 0.85rem 1rem 1rem; }
-    .menu-card-actions { flex-wrap: wrap; }
-    .menu-card-actions .action-btn { font-size: 0.68rem; padding: 0.42rem 0.3rem; }
+    .menu-card-body { padding: 0.85rem 0.85rem 1rem; }
+    .menu-card-top { flex-wrap: wrap; }
+    .menu-card-name { font-size: 0.88rem; }
+    .menu-card-actions { flex-wrap: nowrap; gap: 0.3rem; }
+    .menu-card-actions .action-btn {
+        font-size: 0.65rem;
+        padding: 0.4rem 0.25rem;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .revenue-card { padding: 0.85rem 1rem; gap: 0.6rem; }
+    .revenue-card-icon { width: 38px; height: 38px; }
+    .revenue-value { font-size: 1.1rem; }
+    .revenue-label { font-size: 0.65rem; }
+    .revenue-trend { font-size: 0.65rem; padding: 0.15rem 0.4rem; }
 
     /* Offer cards */
     .offer-card { padding: 1.1rem; }
@@ -1970,11 +1990,35 @@ body {
 
     /* Menu card mobile compact */
     .menu-card-img { height: 130px; }
-    .menu-card-name { font-size: 0.88rem; }
-    .menu-card-desc { font-size: 0.74rem; margin-bottom: 0.45rem; }
-    .menu-card-price { font-size: 0.82rem; margin-bottom: 0.6rem; }
-    .menu-card-actions { gap: 0.25rem; }
-    .menu-card-actions .action-btn { font-size: 0.62rem; padding: 0.38rem 0.2rem; gap: 0.12rem; }
+    .menu-card-name { font-size: 0.84rem; }
+    .menu-card-desc { font-size: 0.72rem; margin-bottom: 0.4rem; -webkit-line-clamp: 1; line-clamp: 1; }
+    .menu-card-price { font-size: 0.78rem; margin-bottom: 0.5rem; }
+    .menu-card-badge { font-size: 0.55rem; padding: 0.15rem 0.4rem; }
+    .menu-card-actions { gap: 0.2rem; }
+    .menu-card-actions .action-btn {
+        font-size: 0.6rem;
+        padding: 0.35rem 0.15rem;
+        gap: 0.1rem;
+        letter-spacing: -0.02em;
+    }
+    .menu-card-body { padding: 0.75rem 0.75rem 0.85rem; }
+    .menu-card-checkbox { width: 24px; height: 24px; font-size: 0.95rem; top: 0.4rem; left: 0.4rem; }
+
+    /* Revenue cards compact */
+    .revenue-card { padding: 0.75rem 0.85rem; gap: 0.5rem; }
+    .revenue-card-icon { width: 34px; height: 34px; }
+    .revenue-card-icon svg { width: 18px; height: 18px; }
+    .revenue-value { font-size: 1rem; }
+    .revenue-label { font-size: 0.62rem; }
+    .revenue-trend { font-size: 0.62rem; padding: 0.12rem 0.35rem; }
+
+    /* Popular items compact */
+    .popular-items-list { padding: 0.5rem 0.85rem 0.85rem; }
+    .popular-item { gap: 0.6rem; padding: 0.55rem 0; }
+    .popular-item-rank { font-size: 1rem; width: 26px; }
+    .popular-item-name { font-size: 0.78rem; }
+    .popular-item-count { font-size: 0.68rem; }
+    .popular-item-rev { font-size: 0.62rem; }
 
     /* Stat cards compact */
     .stat-card { padding: 1rem 1.1rem 0.85rem; }

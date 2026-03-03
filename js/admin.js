@@ -936,26 +936,66 @@ function saveMenuItem() {
         var file = window._pendingImageFile;
         var ext = file.name.split('.').pop().toLowerCase();
         var fileName = category + '/' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now() + '.' + ext;
-        var ref = storage.ref('menu-images/' + fileName);
-        var uploadTask = ref.put(file);
+        console.log('[KKFC] Uploading image:', fileName, 'Size:', file.size, 'Type:', file.type);
 
-        uploadTask.on('state_changed',
-            function(snapshot) {
-                var pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                btn.textContent = 'Uploading ' + pct + '%...';
-            },
-            function(err) {
-                showToast('Upload error: ' + err.message, 'error');
+        try {
+            var ref = storage.ref('menu-images/' + fileName);
+            var metadata = { contentType: file.type || 'image/jpeg' };
+            var uploadTask = ref.put(file, metadata);
+
+            // Timeout: if upload doesn't complete in 60 seconds, abort
+            var uploadTimeout = setTimeout(function() {
+                console.error('[KKFC] Upload timed out after 60s');
+                try { uploadTask.cancel(); } catch(e) {}
+                showToast('Upload timed out. Check Firebase Storage setup (rules & CORS).', 'error');
                 btn.disabled = false;
                 btn.textContent = 'Save Item';
-            },
-            function() {
-                uploadTask.snapshot.ref.getDownloadURL().then(function(url) {
-                    window._pendingImageFile = null;
-                    doSaveMenuItem(id, category, name, desc, url, available, btn);
-                });
-            }
-        );
+            }, 60000);
+
+            uploadTask.on('state_changed',
+                function(snapshot) {
+                    var pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    console.log('[KKFC] Upload progress:', pct + '%');
+                    btn.textContent = 'Uploading ' + pct + '%...';
+                },
+                function(err) {
+                    clearTimeout(uploadTimeout);
+                    console.error('[KKFC] Upload error:', err.code, err.message);
+                    var msg = 'Upload failed: ';
+                    if (err.code === 'storage/unauthorized') {
+                        msg += 'Not authorized. Check Firebase Storage rules.';
+                    } else if (err.code === 'storage/canceled') {
+                        msg += 'Upload was cancelled.';
+                    } else if (err.code === 'storage/retry-limit-exceeded') {
+                        msg += 'Please check your internet and try again.';
+                    } else {
+                        msg += err.message || 'Unknown error';
+                    }
+                    showToast(msg, 'error');
+                    btn.disabled = false;
+                    btn.textContent = 'Save Item';
+                },
+                function() {
+                    clearTimeout(uploadTimeout);
+                    console.log('[KKFC] Upload complete, getting download URL...');
+                    uploadTask.snapshot.ref.getDownloadURL().then(function(url) {
+                        console.log('[KKFC] Got download URL:', url);
+                        window._pendingImageFile = null;
+                        doSaveMenuItem(id, category, name, desc, url, available, btn);
+                    }).catch(function(err) {
+                        console.error('[KKFC] Error getting download URL:', err);
+                        showToast('Error getting image URL: ' + err.message, 'error');
+                        btn.disabled = false;
+                        btn.textContent = 'Save Item';
+                    });
+                }
+            );
+        } catch(err) {
+            console.error('[KKFC] Storage upload exception:', err);
+            showToast('Storage not available: ' + err.message + '. Saving without image upload.', 'error');
+            window._pendingImageFile = null;
+            doSaveMenuItem(id, category, name, desc, image, available, btn);
+        }
         return;
     }
 
