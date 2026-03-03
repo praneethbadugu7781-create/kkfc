@@ -32,8 +32,8 @@ function syncMenuFromFirestore() {
                     item.available = fsItem.available !== false;
                     if (fsItem.name) item.name = fsItem.name;
                     if (fsItem.desc !== undefined) item.desc = fsItem.desc;
-                    // Only override image if Firestore has a local/custom image (not stock Unsplash)
-                    if (fsItem.image && !fsItem.image.includes('unsplash.com')) item.image = fsItem.image;
+                    // Always use Firestore image if available
+                    if (fsItem.image) item.image = fsItem.image;
                     if (fsItem.prices) item.prices = fsItem.prices;
                     if (fsItem.sizes) item.sizes = fsItem.sizes;
                     if (fsItem.price !== undefined) item.price = fsItem.price;

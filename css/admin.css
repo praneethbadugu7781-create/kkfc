@@ -1922,40 +1922,41 @@ body {
     .filter-bar::-webkit-scrollbar { display: none; }
     .filter-btn { white-space: nowrap; flex-shrink: 0; padding: 0.35rem 0.65rem; font-size: 0.72rem; }
 
-    /* Menu grid */
-    .menu-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+    /* Menu grid — 2 columns on mobile */
+    .menu-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
     .offers-grid { grid-template-columns: 1fr; }
 
-    /* Menu card — compact for mobile */
+    /* Menu card — ultra compact for 2-col */
     .menu-card { border-radius: var(--radius-sm); }
-    .menu-card-img { height: 140px; }
-    .menu-card-body { padding: 0.7rem 0.8rem 0.8rem; }
-    .menu-card-top { flex-wrap: wrap; gap: 0.3rem; }
-    .menu-card-name { font-size: 0.85rem; }
-    .menu-card-badge { font-size: 0.52rem; padding: 0.12rem 0.4rem; }
-    .menu-card-desc { font-size: 0.72rem; margin-bottom: 0.35rem; -webkit-line-clamp: 1; line-clamp: 1; }
-    .menu-card-price { font-size: 0.8rem; margin-bottom: 0.5rem; }
+    .menu-card-img { height: 100px; }
+    .menu-card-body { padding: 0.45rem 0.5rem 0.55rem; }
+    .menu-card-top { flex-direction: column; gap: 0.15rem; }
+    .menu-card-name { font-size: 0.72rem; line-height: 1.25; }
+    .menu-card-badge { font-size: 0.45rem; padding: 0.08rem 0.3rem; align-self: flex-start; }
+    .menu-card-desc { display: none; }
+    .menu-card-price { font-size: 0.68rem; margin-bottom: 0.35rem; line-height: 1.3; }
 
-    /* Action buttons — icon + short text, equal width */
+    /* Action buttons stacked for tiny cards */
     .menu-card-actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 0.3rem;
-        padding-top: 0.55rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding-top: 0.35rem;
     }
     .menu-card-actions .action-btn {
-        font-size: 0.62rem;
-        padding: 0.38rem 0.2rem;
+        font-size: 0.58rem;
+        padding: 0.3rem 0.2rem;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        gap: 0.15rem;
-        border-radius: 6px;
+        gap: 0.12rem;
+        border-radius: 5px;
         min-width: 0;
+        width: 100%;
     }
 
-    /* Checkbox overlay on card */
-    .menu-card-checkbox { width: 24px; height: 24px; font-size: 0.9rem; top: 0.4rem; left: 0.4rem; }
+    /* Checkbox smaller */
+    .menu-card-checkbox { width: 20px; height: 20px; font-size: 0.78rem; top: 0.3rem; left: 0.3rem; border-radius: 4px; }
 
     .form-row { grid-template-columns: 1fr; }
     .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
@@ -2055,15 +2056,17 @@ body {
     .page-count { font-size: 0.6rem; }
 
     /* Menu card at tiny screens */
-    .menu-card-img { height: 120px; }
-    .menu-card-body { padding: 0.6rem 0.65rem 0.7rem; }
-    .menu-card-name { font-size: 0.8rem; }
-    .menu-card-desc { font-size: 0.68rem; margin-bottom: 0.3rem; }
-    .menu-card-price { font-size: 0.75rem; margin-bottom: 0.4rem; }
+    .menu-card-img { height: 85px; }
+    .menu-card-body { padding: 0.35rem 0.4rem 0.45rem; }
+    .menu-card-name { font-size: 0.65rem; }
+    .menu-card-price { font-size: 0.62rem; margin-bottom: 0.25rem; }
+    .menu-card-badge { font-size: 0.42rem; }
     .menu-card-actions .action-btn {
-        font-size: 0.56rem;
-        padding: 0.32rem 0.12rem;
+        font-size: 0.52rem;
+        padding: 0.25rem 0.15rem;
     }
+    .menu-card-checkbox { width: 18px; height: 18px; font-size: 0.7rem; }
+    .menu-grid { gap: 0.4rem; }
 
     .form-row.three { grid-template-columns: 1fr; }
     .filter-btn { padding: 0.3rem 0.55rem; font-size: 0.68rem; }
