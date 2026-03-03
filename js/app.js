@@ -48,7 +48,7 @@ function syncMenuFromFirestore() {
         Object.keys(firestoreItems).forEach(function(fsId) {
             if (hardcodedIds[fsId]) return; // already merged above
             var fsItem = firestoreItems[fsId];
-            var cat = fsItem.category; // e.g. 'icecream', 'shakes', 'chicken', 'combos'
+            var cat = fsItem.category; // e.g. 'icecream', 'shakes', 'chicken', 'combos', 'protein'
             if (!cat || !menuData[cat]) return; // unknown category, skip
 
             // Build item object matching hardcoded format
@@ -328,15 +328,21 @@ const menuData = {
             { id: 'cb1', name: 'Super Special Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (8), Medium Pop Corn', price: 1099, image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80' },
             { id: 'cb2', name: 'Family Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4), Regular Pop Corn', price: 839, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80' },
             { id: 'cb3', name: 'Big Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4)', price: 699, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' },
-            { id: 'cb4', name: 'Mini Bucket Combo', desc: 'Hot & Crispy (2), Wings (4), Regular Pop Corn', price: 419, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' },
-            { id: 'cb5', name: 'Prawn Crumbed Balls', desc: 'Crispy prawn balls (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400&q=80' },
-            { id: 'cb6', name: 'Bread Butterfly Shrimp', desc: 'Butterfly shrimp (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400&q=80' },
-            { id: 'cb7', name: 'Shrimp Spring Rolls', desc: 'Crispy spring rolls (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1606525437679-037aca74a3e9?w=400&q=80' },
-            { id: 'cb8', name: 'Bread Popcorn', desc: 'Bread coated popcorn', price: 250, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80' },
-            { id: 'cb9', name: 'Shrimp Samosa', desc: 'Shrimp filled samosas (6 Pcs)', price: 250, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80' },
-            { id: 'cb10', name: 'Fish Fingers', desc: 'Crispy fish fingers (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1580217593608-61931cefc821?w=400&q=80' },
-            { id: 'cb11', name: 'Fish Cutlet', desc: 'Fish cutlets (4 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80' },
-            { id: 'cb12', name: 'Shrimp Rings', desc: 'Crispy shrimp rings', price: 250, image: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400&q=80' }
+            { id: 'cb4', name: 'Mini Bucket Combo', desc: 'Hot & Crispy (2), Wings (4), Regular Pop Corn', price: 419, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' }
+        ]
+    },
+    protein: {
+        name: 'High Protein Combo',
+        type: 'protein',
+        items: [
+            { id: 'hp1', name: 'Bread Butterfly Shrimp', desc: 'Butterfly shrimp (6 Pcs)', price: 200, image: 'images/protein/bread-butterfly-shrimp.webp' },
+            { id: 'hp2', name: 'Bread Popcorn', desc: 'Bread coated popcorn', price: 250, image: 'images/protein/bread-popcorn.webp' },
+            { id: 'hp3', name: 'Fish Cutlet', desc: 'Fish cutlets (4 Pcs)', price: 200, image: 'images/protein/fish-cutlet.webp' },
+            { id: 'hp4', name: 'Fish Fingers', desc: 'Crispy fish fingers (6 Pcs)', price: 200, image: 'images/protein/fish-fingers.webp' },
+            { id: 'hp5', name: 'Prawn Crumbed Balls', desc: 'Crispy prawn balls (6 Pcs)', price: 200, image: 'images/protein/prawn-crumbed-balls.webp' },
+            { id: 'hp6', name: 'Shrimp Rings', desc: 'Crispy shrimp rings', price: 250, image: 'images/protein/shrimp-rings.webp' },
+            { id: 'hp7', name: 'Shrimp Samosa', desc: 'Shrimp filled samosas (6 Pcs)', price: 250, image: 'images/protein/shrimp-samosa.webp' },
+            { id: 'hp8', name: 'Shrimp Spring Rolls', desc: 'Crispy spring rolls (6 Pcs)', price: 200, image: 'images/protein/shrimp-spring-rolls.webp' }
         ]
     }
 };

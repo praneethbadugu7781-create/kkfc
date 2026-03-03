@@ -38,7 +38,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=20">
+    <link rel="stylesheet" href="css/styles.css?v=21">
 
     <!-- Structured Data - Local Business -->
     <script type="application/ld+json">
@@ -60,7 +60,8 @@
                 {"@type": "MenuSection", "name": "Ice Creams"},
                 {"@type": "MenuSection", "name": "Milk Shakes & Thick Shakes"},
                 {"@type": "MenuSection", "name": "Fried Chicken"},
-                {"@type": "MenuSection", "name": "Combo Meals"}
+                {"@type": "MenuSection", "name": "Combos"},
+                {"@type": "MenuSection", "name": "High Protein Combo"}
             ]
         },
         "sameAs": []
@@ -136,6 +137,7 @@
                     <a href="?cat=shakes" onclick="event.preventDefault();showMenu('shakes')" class="category-card hero-tab-btn" role="button">Shakes</a>
                     <a href="?cat=chicken" onclick="event.preventDefault();showMenu('chicken')" class="category-card hero-tab-btn" role="button">Chicken</a>
                     <a href="?cat=combos" onclick="event.preventDefault();showMenu('combos')" class="category-card hero-tab-btn" role="button">Combos</a>
+                    <a href="?cat=protein" onclick="event.preventDefault();showMenu('protein')" class="category-card hero-tab-btn" role="button">High Protein</a>
                 </div>
             </div>
         </section>
@@ -202,6 +204,16 @@
                             </span>
                         </div>
                         <h3 class="cat-card-name">Combos</h3>
+                    </div>
+                    <span class="cat-dot"></span>
+                    <div class="cat-card" onclick="showMenu('protein')" style="cursor:pointer">
+                        <div class="cat-card-img">
+                            <img src="images/protein/bread-butterfly-shrimp.webp" alt="High Protein Combo" loading="lazy">
+                            <span class="cat-badge">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm6 11h-3v3h-2v-3H8v-2h3v-3h2v3h3v2z"/></svg>
+                            </span>
+                        </div>
+                        <h3 class="cat-card-name">High Protein</h3>
                     </div>
                 </div>
 
@@ -692,6 +704,7 @@
                     <a href="#" onclick="showMenu('shakes'); return false;">Shakes</a>
                     <a href="#" onclick="showMenu('chicken'); return false;">Chicken</a>
                     <a href="#" onclick="showMenu('combos'); return false;">Combos</a>
+                    <a href="#" onclick="showMenu('protein'); return false;">High Protein</a>
                 </div>
                 <div class="footer-col">
                     <h5>Contact</h5>
@@ -728,7 +741,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="js/firebase-config.js"></script>
 
-    <script src="js/app.js?v=25"></script>
+    <script src="js/app.js?v=26"></script>
     <script>
     // ========== COUNTER ANIMATION — CONTINUOUS LOOP ==========
     (function() {

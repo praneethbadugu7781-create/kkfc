@@ -31,7 +31,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=20">
+    <link rel="stylesheet" href="css/styles.css?v=21">
     <style>
         /* ========== MENU PAGE — PLATERIA STYLE ========== */
         .menu-hero {
@@ -263,6 +263,7 @@
                     <button class="filter-tab" data-filter="shakes">Shakes</button>
                     <button class="filter-tab" data-filter="chicken">Chicken</button>
                     <button class="filter-tab" data-filter="combos">Combos</button>
+                    <button class="filter-tab" data-filter="protein">High Protein</button>
                 </div>
             </div>
         </section>
@@ -396,11 +397,20 @@
                 { name: 'Super Special Combo', price: '₹1,099', image: 'https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?w=400&q=80', veg: false },
                 { name: 'Family Bucket', price: '₹839', image: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80', veg: false },
                 { name: 'Big Bucket', price: '₹699', image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&q=80', veg: false },
-                { name: 'Mini Bucket', price: '₹419', image: 'https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=400&q=80', veg: false },
-                { name: 'Prawn Balls', price: '₹200', image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', veg: false },
-                { name: 'Fish Fingers', price: '₹200', image: 'https://images.unsplash.com/photo-1604909052743-94e838986d24?w=400&q=80', veg: false },
-                { name: 'Shrimp Rolls', price: '₹200', image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', veg: false },
-                { name: 'Shrimp Samosa', price: '₹250', image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', veg: false }
+                { name: 'Mini Bucket', price: '₹419', image: 'https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=400&q=80', veg: false }
+            ]
+        },
+        protein: {
+            name: 'High Protein Combo', type: 'protein', veg: false,
+            items: [
+                { name: 'Bread Butterfly Shrimp', price: '₹200', image: 'images/protein/bread-butterfly-shrimp.webp', veg: false },
+                { name: 'Bread Popcorn', price: '₹250', image: 'images/protein/bread-popcorn.webp', veg: false },
+                { name: 'Fish Cutlet', price: '₹200', image: 'images/protein/fish-cutlet.webp', veg: false },
+                { name: 'Fish Fingers', price: '₹200', image: 'images/protein/fish-fingers.webp', veg: false },
+                { name: 'Prawn Crumbed Balls', price: '₹200', image: 'images/protein/prawn-crumbed-balls.webp', veg: false },
+                { name: 'Shrimp Rings', price: '₹250', image: 'images/protein/shrimp-rings.webp', veg: false },
+                { name: 'Shrimp Samosa', price: '₹250', image: 'images/protein/shrimp-samosa.webp', veg: false },
+                { name: 'Shrimp Spring Rolls', price: '₹200', image: 'images/protein/shrimp-spring-rolls.webp', veg: false }
             ]
         }
     };
