@@ -484,7 +484,7 @@
                         menuData[cat].items.forEach(function(item) {
                             if (item.name.toLowerCase().trim() === nameLower) {
                                 item.price = displayPrice;
-                                if (d.image) item.image = d.image;
+                                if (d.image && !d.image.includes('unsplash.com')) item.image = d.image;
                                 changed = true;
                             }
                         });
