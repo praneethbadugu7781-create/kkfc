@@ -311,12 +311,12 @@ const menuData = {
         name: 'Chicken (KKFC)',
         type: 'chicken',
         items: [
-            { id: 'ch1', name: 'Crispy Chicken Wings', desc: 'Golden crispy wings', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/crispy-wings.png' },
-            { id: 'ch2', name: 'Crispy Chicken Drumsticks', desc: 'Juicy drumsticks', sizes: { 'Small (3 Pcs)': 329, 'Medium (6 Pcs)': 639, 'Large (9 Pcs)': 950 }, image: 'images/chicken/drumsticks.png' },
-            { id: 'ch3', name: 'Crispy Chicken Popcorn', desc: 'Bite-sized chicken pops', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/chicken-popcorn.png' },
-            { id: 'ch4', name: 'Crispy Boneless Strips', desc: 'Tender boneless strips', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/boneless-strips.png' },
-            { id: 'ch5', name: 'French Fries', desc: 'Crispy golden fries', sizes: { 'Small': 129, 'Medium': 239, 'Large': 339 }, image: 'images/chicken/french-fries.png' },
-            { id: 'ch6', name: 'Spring Potato', desc: 'Spiral cut potato', price: 50, image: 'images/chicken/spring-potato.png' }
+            { id: 'ch1', name: 'Crispy Chicken Wings', desc: 'Golden crispy wings', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/crispy-wings.webp' },
+            { id: 'ch2', name: 'Crispy Chicken Drumsticks', desc: 'Juicy drumsticks', sizes: { 'Small (3 Pcs)': 329, 'Medium (6 Pcs)': 639, 'Large (9 Pcs)': 950 }, image: 'images/chicken/drumsticks.webp' },
+            { id: 'ch3', name: 'Crispy Chicken Popcorn', desc: 'Bite-sized chicken pops', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/chicken-popcorn.webp' },
+            { id: 'ch4', name: 'Crispy Boneless Strips', desc: 'Tender boneless strips', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/boneless-strips.webp' },
+            { id: 'ch5', name: 'French Fries', desc: 'Crispy golden fries', sizes: { 'Small': 129, 'Medium': 239, 'Large': 339 }, image: 'images/chicken/french-fries.webp' },
+            { id: 'ch6', name: 'Spring Potato', desc: 'Spiral cut potato', price: 50, image: 'images/chicken/spring-potato.webp' }
         ]
     },
     combos: {
