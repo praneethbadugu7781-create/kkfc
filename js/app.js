@@ -45,8 +45,11 @@ function syncMenuFromFirestore() {
         });
 
         // Add NEW items from Firestore that don't exist in hardcoded data
+        // Skip old combo IDs that were moved to protein category
+        var deprecatedIds = { cb5:1, cb6:1, cb7:1, cb8:1, cb9:1, cb10:1, cb11:1, cb12:1 };
         Object.keys(firestoreItems).forEach(function(fsId) {
             if (hardcodedIds[fsId]) return; // already merged above
+            if (deprecatedIds[fsId]) return; // moved to another category, skip
             var fsItem = firestoreItems[fsId];
             var cat = fsItem.category; // e.g. 'icecream', 'shakes', 'chicken', 'combos', 'protein'
             if (!cat || !menuData[cat]) return; // unknown category, skip
