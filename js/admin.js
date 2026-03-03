@@ -101,6 +101,7 @@ let allOrders = [];
 let unsubMenu = null;
 let unsubOffers = null;
 let unsubOrders = null;
+let selectedMenuItems = new Set();
 
 // ========== INIT ==========
 document.addEventListener('DOMContentLoaded', function() {
@@ -118,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupLoginForm();
     setupSidebar();
     setupMenuTab();
+    setupBulkActions();
     setupOfferTab();
     setupOrderTab();
 });
@@ -308,6 +310,12 @@ function updateDashboardStats() {
 
     // Update filter counts
     updateFilterCounts();
+
+    // Update revenue analytics
+    updateRevenueAnalytics();
+
+    // Update popular items
+    renderPopularItems();
 }
 
 function setStatBarWidth(statId, value, max) {
@@ -331,6 +339,313 @@ function updateFilterCounts() {
     });
     var countEl = document.getElementById('menuItemCount');
     if (countEl) countEl.textContent = allMenuItems.length + ' items';
+}
+
+// ========== REVENUE ANALYTICS ==========
+function updateRevenueAnalytics() {
+    var now = new Date();
+    var todayStr = now.toISOString().split('T')[0];
+
+    // Helper to get date from order
+    function getOrderDate(order) {
+        if (!order.createdAt) return null;
+        return order.createdAt.toDate ? order.createdAt.toDate() : new Date(order.createdAt);
+    }
+
+    // Helper: start of week (Monday)
+    function getWeekStart(d) {
+        var date = new Date(d);
+        var day = date.getDay();
+        var diff = day === 0 ? 6 : day - 1;
+        date.setDate(date.getDate() - diff);
+        date.setHours(0, 0, 0, 0);
+        return date;
+    }
+
+    // Helper: start of month
+    function getMonthStart(d) {
+        return new Date(d.getFullYear(), d.getMonth(), 1);
+    }
+
+    var todayRevenue = 0, weekRevenue = 0, monthRevenue = 0;
+    var prevTodayRevenue = 0, prevWeekRevenue = 0, prevMonthRevenue = 0;
+    var todayCount = 0, totalRevenue = 0;
+
+    var weekStart = getWeekStart(now);
+    var monthStart = getMonthStart(now);
+
+    // Previous period boundaries
+    var yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    var yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    var prevWeekStart = new Date(weekStart);
+    prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+
+    var prevMonthStart = new Date(monthStart);
+    prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+
+    allOrders.forEach(function(order) {
+        var d = getOrderDate(order);
+        if (!d) return;
+        var total = parseFloat(order.total) || 0;
+        var dateStr = d.toISOString().split('T')[0];
+        totalRevenue += total;
+
+        // Today
+        if (dateStr === todayStr) {
+            todayRevenue += total;
+            todayCount++;
+        }
+        // Yesterday (for trend)
+        if (dateStr === yesterdayStr) {
+            prevTodayRevenue += total;
+        }
+        // This week
+        if (d >= weekStart) {
+            weekRevenue += total;
+        }
+        // Previous week (for trend)
+        if (d >= prevWeekStart && d < weekStart) {
+            prevWeekRevenue += total;
+        }
+        // This month
+        if (d >= monthStart) {
+            monthRevenue += total;
+        }
+        // Previous month (for trend)
+        if (d >= prevMonthStart && d < monthStart) {
+            prevMonthRevenue += total;
+        }
+    });
+
+    var avgOrder = allOrders.length > 0 ? Math.round(totalRevenue / allOrders.length) : 0;
+
+    // Format currency
+    function formatCurrency(val) {
+        if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + 'L';
+        if (val >= 1000) return '₹' + (val / 1000).toFixed(1) + 'K';
+        return '₹' + Math.round(val);
+    }
+
+    // Calc trend percentage
+    function getTrend(current, previous) {
+        if (previous === 0 && current === 0) return { text: '—', cls: '' };
+        if (previous === 0) return { text: '↑ New', cls: 'up' };
+        var pct = Math.round(((current - previous) / previous) * 100);
+        if (pct > 0) return { text: '↑ ' + pct + '%', cls: 'up' };
+        if (pct < 0) return { text: '↓ ' + Math.abs(pct) + '%', cls: 'down' };
+        return { text: '→ 0%', cls: '' };
+    }
+
+    // Update DOM
+    var elToday = document.getElementById('revToday');
+    var elWeek = document.getElementById('revWeek');
+    var elMonth = document.getElementById('revMonth');
+    var elAvg = document.getElementById('revAvgOrder');
+    if (elToday) elToday.textContent = formatCurrency(todayRevenue);
+    if (elWeek) elWeek.textContent = formatCurrency(weekRevenue);
+    if (elMonth) elMonth.textContent = formatCurrency(monthRevenue);
+    if (elAvg) elAvg.textContent = formatCurrency(avgOrder);
+
+    // Update trends
+    var trendToday = getTrend(todayRevenue, prevTodayRevenue);
+    var trendWeek = getTrend(weekRevenue, prevWeekRevenue);
+    var trendMonth = getTrend(monthRevenue, prevMonthRevenue);
+
+    function setTrend(id, trend) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = trend.text;
+        el.className = 'revenue-trend ' + trend.cls;
+    }
+    setTrend('revTodayTrend', trendToday);
+    setTrend('revWeekTrend', trendWeek);
+    setTrend('revMonthTrend', trendMonth);
+}
+
+// ========== POPULAR ITEMS ==========
+function renderPopularItems() {
+    var container = document.getElementById('popularItemsList');
+    if (!container) return;
+
+    if (allOrders.length === 0) {
+        container.innerHTML = '<div class="loading-state">No order data yet</div>';
+        return;
+    }
+
+    // Aggregate items from all orders
+    var itemMap = {};
+    allOrders.forEach(function(order) {
+        if (!order.items || !order.items.length) return;
+        order.items.forEach(function(item) {
+            var key = item.name || 'Unknown';
+            if (!itemMap[key]) {
+                itemMap[key] = { name: key, count: 0, revenue: 0 };
+            }
+            itemMap[key].count += (item.qty || 1);
+            itemMap[key].revenue += (parseFloat(item.total) || 0);
+        });
+    });
+
+    // Sort by order count, take top 5
+    var sorted = Object.values(itemMap).sort(function(a, b) { return b.count - a.count; });
+    var top5 = sorted.slice(0, 5);
+
+    if (top5.length === 0) {
+        container.innerHTML = '<div class="loading-state">No item data in orders</div>';
+        return;
+    }
+
+    var maxCount = top5[0].count;
+    var rankEmojis = ['🥇', '🥈', '🥉'];
+
+    container.innerHTML = top5.map(function(item, i) {
+        var barWidth = Math.round((item.count / maxCount) * 100);
+        var rankLabel = i < 3 ? rankEmojis[i] : '<span class="popular-rank">' + (i + 1) + '</span>';
+        return '<div class="popular-item">' +
+            '<div class="popular-item-rank">' + rankLabel + '</div>' +
+            '<div class="popular-item-info">' +
+                '<div class="popular-item-name">' + item.name + '</div>' +
+                '<div class="popular-item-bar"><div class="popular-item-bar-fill" style="width:' + barWidth + '%"></div></div>' +
+            '</div>' +
+            '<div class="popular-item-stats">' +
+                '<span class="popular-item-count">' + item.count + ' sold</span>' +
+                '<span class="popular-item-rev">₹' + Math.round(item.revenue) + '</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+
+// ========== BULK MENU ACTIONS ==========
+function setupBulkActions() {
+    var bar = document.getElementById('bulkActionBar');
+    if (!bar) return;
+
+    document.getElementById('bulkSelectAll').addEventListener('click', function() {
+        var items = getFilteredMenuItems();
+        if (selectedMenuItems.size === items.length && items.length > 0) {
+            // Deselect all
+            selectedMenuItems.clear();
+        } else {
+            // Select all visible
+            items.forEach(function(item) { selectedMenuItems.add(item.id); });
+        }
+        updateBulkUI();
+        updateMenuCardCheckboxes();
+    });
+
+    document.getElementById('bulkAvailableBtn').addEventListener('click', function() {
+        bulkUpdateAvailability(true);
+    });
+
+    document.getElementById('bulkUnavailableBtn').addEventListener('click', function() {
+        bulkUpdateAvailability(false);
+    });
+
+    document.getElementById('bulkDeleteBtn').addEventListener('click', function() {
+        bulkDeleteItems();
+    });
+
+    document.getElementById('bulkCancelBtn').addEventListener('click', function() {
+        selectedMenuItems.clear();
+        updateBulkUI();
+        updateMenuCardCheckboxes();
+    });
+}
+
+function getFilteredMenuItems() {
+    var items = currentFilter === 'all' ? allMenuItems : allMenuItems.filter(function(i) { return i.category === currentFilter; });
+    var searchInput = document.getElementById('adminMenuSearch');
+    var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    if (query) {
+        items = items.filter(function(i) {
+            return (i.name && i.name.toLowerCase().indexOf(query) !== -1) ||
+                   (i.desc && i.desc.toLowerCase().indexOf(query) !== -1) ||
+                   (i.category && i.category.toLowerCase().indexOf(query) !== -1);
+        });
+    }
+    return items;
+}
+
+function toggleMenuItemSelection(itemId) {
+    if (selectedMenuItems.has(itemId)) {
+        selectedMenuItems.delete(itemId);
+    } else {
+        selectedMenuItems.add(itemId);
+    }
+    updateBulkUI();
+    updateMenuCardCheckboxes();
+}
+
+function updateBulkUI() {
+    var bar = document.getElementById('bulkActionBar');
+    var count = selectedMenuItems.size;
+    var countEl = document.getElementById('bulkCount');
+    var selectAllBtn = document.getElementById('bulkSelectAll');
+
+    if (count > 0) {
+        bar.style.display = '';
+        countEl.textContent = count + ' selected';
+    } else {
+        bar.style.display = 'none';
+    }
+
+    // Update select all button icon
+    var items = getFilteredMenuItems();
+    if (items.length > 0 && selectedMenuItems.size === items.length) {
+        selectAllBtn.textContent = '☑';
+        selectAllBtn.title = 'Deselect All';
+    } else {
+        selectAllBtn.textContent = '☐';
+        selectAllBtn.title = 'Select All';
+    }
+}
+
+function updateMenuCardCheckboxes() {
+    document.querySelectorAll('.menu-card').forEach(function(card) {
+        var cb = card.querySelector('.menu-card-checkbox');
+        if (cb) {
+            var itemId = cb.dataset.id;
+            cb.classList.toggle('checked', selectedMenuItems.has(itemId));
+            cb.textContent = selectedMenuItems.has(itemId) ? '☑' : '☐';
+        }
+    });
+}
+
+function bulkUpdateAvailability(available) {
+    if (selectedMenuItems.size === 0) return;
+    var label = available ? 'available' : 'unavailable';
+    if (!confirm('Mark ' + selectedMenuItems.size + ' item(s) as ' + label + '?')) return;
+
+    var batch = db.batch();
+    selectedMenuItems.forEach(function(id) {
+        batch.update(menuRef.doc(id), { available: available });
+    });
+    batch.commit().then(function() {
+        showToast(selectedMenuItems.size + ' items marked ' + label, 'success');
+        selectedMenuItems.clear();
+        updateBulkUI();
+    }).catch(function(err) {
+        showToast('Error: ' + err.message, 'error');
+    });
+}
+
+function bulkDeleteItems() {
+    if (selectedMenuItems.size === 0) return;
+    if (!confirm('Delete ' + selectedMenuItems.size + ' item(s)? This cannot be undone!')) return;
+
+    var batch = db.batch();
+    selectedMenuItems.forEach(function(id) {
+        batch.delete(menuRef.doc(id));
+    });
+    batch.commit().then(function() {
+        showToast(selectedMenuItems.size + ' items deleted', 'success');
+        selectedMenuItems.clear();
+        updateBulkUI();
+    }).catch(function(err) {
+        showToast('Error: ' + err.message, 'error');
+    });
 }
 
 // ========== MENU MANAGEMENT ==========
@@ -448,7 +763,9 @@ function renderMenuGrid() {
     grid.innerHTML = items.map(function(item) {
         var priceText = getItemPriceDisplay(item);
         var available = item.available !== false;
-        return '<div class="menu-card ' + (available ? '' : 'unavailable') + '">' +
+        var isSelected = selectedMenuItems.has(item.id);
+        return '<div class="menu-card ' + (available ? '' : 'unavailable') + (isSelected ? ' selected' : '') + '">' +
+            '<div class="menu-card-checkbox' + (isSelected ? ' checked' : '') + '" data-id="' + item.id + '" onclick="event.stopPropagation();toggleMenuItemSelection(\'' + item.id + '\')">' + (isSelected ? '☑' : '☐') + '</div>' +
             '<div class="menu-card-img"><img src="' + (item.image || 'https://via.placeholder.com/400x200?text=No+Image') + '" alt="' + item.name + '" loading="lazy"></div>' +
             '<div class="menu-card-body">' +
                 '<div class="menu-card-top">' +
