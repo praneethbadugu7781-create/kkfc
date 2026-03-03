@@ -367,6 +367,45 @@ function setupMenuTab() {
         saveMenuItem();
     });
 
+    // Image upload area
+    var uploadArea = document.getElementById('imageUploadArea');
+    var fileInput = document.getElementById('imageFileInput');
+    var preview = document.getElementById('imagePreview');
+    var placeholder = document.getElementById('imageUploadPlaceholder');
+    var removeBtn = document.getElementById('removeImageBtn');
+
+    if (uploadArea && fileInput) {
+        uploadArea.addEventListener('click', function() { fileInput.click(); });
+        fileInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('Image must be under 5MB', 'error');
+                return;
+            }
+            window._pendingImageFile = file;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                removeBtn.style.display = '';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            window._pendingImageFile = null;
+            fileInput.value = '';
+            preview.src = '';
+            preview.style.display = 'none';
+            placeholder.style.display = '';
+            removeBtn.style.display = 'none';
+            document.getElementById('itemImage').value = '';
+        });
+    }
+
     // Menu search
     var searchInput = document.getElementById('adminMenuSearch');
     var searchClear = document.getElementById('adminSearchClear');
@@ -452,6 +491,15 @@ function openMenuItemModal(item) {
     document.getElementById('editItemId').value = '';
     document.getElementById('itemAvailable').checked = true;
 
+    // Reset image upload
+    document.getElementById('itemImage').value = '';
+    document.getElementById('imagePreview').src = '';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('imageUploadPlaceholder').style.display = '';
+    document.getElementById('removeImageBtn').style.display = 'none';
+    document.getElementById('imageFileInput').value = '';
+    window._pendingImageFile = null;
+
     // Reset chicken sizes to one row
     document.getElementById('chickenSizesContainer').innerHTML =
         '<div class="size-row">' +
@@ -467,6 +515,13 @@ function openMenuItemModal(item) {
         document.getElementById('itemName').value = item.name || '';
         document.getElementById('itemDesc').value = item.desc || '';
         document.getElementById('itemImage').value = item.image || '';
+        // Show existing image in preview
+        if (item.image) {
+            document.getElementById('imagePreview').src = item.image;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('imageUploadPlaceholder').style.display = 'none';
+            document.getElementById('removeImageBtn').style.display = '';
+        }
         document.getElementById('itemAvailable').checked = item.available !== false;
 
         updatePricingSection(item.category);
@@ -555,6 +610,42 @@ function saveMenuItem() {
         return;
     }
 
+    var btn = document.getElementById('saveItemBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    // If user picked a new image file, upload it first
+    if (window._pendingImageFile && storage) {
+        var file = window._pendingImageFile;
+        var ext = file.name.split('.').pop().toLowerCase();
+        var fileName = category + '/' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now() + '.' + ext;
+        var ref = storage.ref('menu-images/' + fileName);
+        var uploadTask = ref.put(file);
+
+        uploadTask.on('state_changed',
+            function(snapshot) {
+                var pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                btn.textContent = 'Uploading ' + pct + '%...';
+            },
+            function(err) {
+                showToast('Upload error: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Save Item';
+            },
+            function() {
+                uploadTask.snapshot.ref.getDownloadURL().then(function(url) {
+                    window._pendingImageFile = null;
+                    doSaveMenuItem(id, category, name, desc, url, available, btn);
+                });
+            }
+        );
+        return;
+    }
+
+    doSaveMenuItem(id, category, name, desc, image, available, btn);
+}
+
+function doSaveMenuItem(id, category, name, desc, image, available, btn) {
     var data = {
         category: category,
         name: name,
@@ -601,10 +692,6 @@ function saveMenuItem() {
     } else {
         data.price = Number(document.getElementById('itemPrice').value) || 0;
     }
-
-    var btn = document.getElementById('saveItemBtn');
-    btn.disabled = true;
-    btn.textContent = 'Saving...';
 
     var promise;
     if (id) {
