@@ -1414,6 +1414,7 @@ h1, h2, h3, h4, h5, h6 {
     backface-visibility: hidden;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    background: #1a1028;
 }
 
 .menu-item-image {
@@ -1421,6 +1422,10 @@ h1, h2, h3, h4, h5, h6 {
     object-fit: cover;
     transition: transform 0.5s var(--ease);
     display: block;
+}
+
+.menu-item-image.tall-image {
+    object-fit: contain;
 }
 
 .menu-item:hover .menu-item-image { transform: scale(1.06); }

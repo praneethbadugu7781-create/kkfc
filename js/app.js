@@ -727,6 +727,8 @@ function renderMenuItems(items, categoryType, container) {
             priceDisplay = formatPrice(item.price);
         }
         
+        const imgClass = item.image.includes('shakes/') ? 'menu-item-image tall-image' : 'menu-item-image';
+        
         menuItem.innerHTML = `
             <div class="menu-item-info">
                 <h4 class="menu-item-name">${item.name}</h4>
@@ -734,7 +736,7 @@ function renderMenuItems(items, categoryType, container) {
                 <span class="menu-item-price">${isAvailable ? priceDisplay : '<span class="stock-badge">Out of Stock</span>'}</span>
             </div>
             <div class="menu-item-image-wrapper">
-                <img src="${item.image}" alt="${item.name}" class="menu-item-image" loading="lazy">
+                <img src="${item.image}" alt="${item.name}" class="${imgClass}" loading="lazy">
                 ${isAvailable 
                     ? `<button class="add-btn" data-item-id="${item.id}" data-category="${categoryType}">+ Add</button>`
                     : `<span class="soldout-label">Sold Out</span>`
@@ -831,6 +833,8 @@ function renderSearchResults(results) {
             priceDisplay = formatPrice(item.price);
         }
         
+        const imgClass = item.image.includes('shakes/') ? 'menu-item-image tall-image' : 'menu-item-image';
+        
         menuItem.innerHTML = `
             <div class="menu-item-info">
                 <h4 class="menu-item-name">${item.name}</h4>
@@ -838,7 +842,7 @@ function renderSearchResults(results) {
                 <span class="menu-item-price">${isAvailable ? priceDisplay : '<span class="stock-badge">Out of Stock</span>'}</span>
             </div>
             <div class="menu-item-image-wrapper">
-                <img src="${item.image}" alt="${item.name}" class="menu-item-image" loading="lazy">
+                <img src="${item.image}" alt="${item.name}" class="${imgClass}" loading="lazy">
                 ${isAvailable 
                     ? `<button class="add-btn" data-item-id="${item.id}" data-category="${item.categoryType}">+ Add</button>`
                     : `<span class="soldout-label">Sold Out</span>`
