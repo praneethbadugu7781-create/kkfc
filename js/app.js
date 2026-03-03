@@ -294,18 +294,19 @@ const menuData = {
         name: 'Milk Shakes & Thick Shakes',
         type: 'shakes',
         items: [
-            { id: 'sh1', name: 'Pineapple Milk Shake', desc: 'Refreshing pineapple blend', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=400&q=80' },
-            { id: 'sh2', name: 'Guava Milk Shake', desc: 'Tropical guava goodness', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1638176066666-ffb2f013c7dd?w=400&q=80' },
-            { id: 'sh3', name: 'Mango Milk Shake', desc: 'King of fruits shake', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&q=80' },
-            { id: 'sh4', name: 'Tender Coconut Milk Shake', desc: 'Fresh coconut water blend', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?w=400&q=80' },
-            { id: 'sh5', name: 'Chikoo Milk Shake', desc: 'Sweet sapodilla shake', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80' },
-            { id: 'sh6', name: 'Jackfruit Milk Shake', desc: 'Exotic jackfruit flavor', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=400&q=80' },
-            { id: 'sh7', name: 'Avocado Milk Shake', desc: 'Creamy avocado blend', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&q=80' },
-            { id: 'sh8', name: 'Tender Coco Date Milk Shake', desc: 'Coconut and date fusion', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400&q=80' },
-            { id: 'sh9', name: 'Passion Fruit Milk Shake', desc: 'Tangy passion fruit', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80' },
-            { id: 'sh10', name: 'Rajamsndri Rose Milk', desc: 'Traditional rose milk', price: 49, image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400&q=80' },
-            { id: 'sh11', name: 'Bandaru Badam Milk', desc: 'Rich almond milk', price: 49, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80' },
-            { id: 'sh12', name: 'Ice Crushed Drink', desc: 'Cool crushed ice drink', price: 49, image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80' }
+            { id: 'sh1', name: 'Pineapple Milk Shake', desc: 'Refreshing pineapple blend', price: 89, thickPrice: 149, image: 'images/shakes/pineapple-shake.webp' },
+            { id: 'sh2', name: 'Guava Milk Shake', desc: 'Tropical guava goodness', price: 89, thickPrice: 149, image: 'images/shakes/guava-shake.webp' },
+            { id: 'sh3', name: 'Mango Milk Shake', desc: 'King of fruits shake', price: 89, thickPrice: 149, image: 'images/shakes/mango-shake.webp' },
+            { id: 'sh4', name: 'Tender Coconut Milk Shake', desc: 'Fresh coconut water blend', price: 89, thickPrice: 149, image: 'images/shakes/tender-coconut-shake.webp' },
+            { id: 'sh5', name: 'Chikoo Milk Shake', desc: 'Sweet sapodilla shake', price: 89, thickPrice: 149, image: 'images/shakes/chikoo-shake.webp' },
+            { id: 'sh6', name: 'Jackfruit Milk Shake', desc: 'Exotic jackfruit flavor', price: 99, thickPrice: 169, image: 'images/shakes/jackfruit-shake.webp' },
+            { id: 'sh7', name: 'Avocado Milk Shake', desc: 'Creamy avocado blend', price: 99, thickPrice: 169, image: 'images/shakes/avocado-shake.webp' },
+            { id: 'sh8', name: 'Tender Coco Date Milk Shake', desc: 'Coconut and date fusion', price: 99, thickPrice: 169, image: 'images/shakes/tender-coco-date-shake.webp' },
+            { id: 'sh9', name: 'Passion Fruit Milk Shake', desc: 'Tangy passion fruit', price: 99, thickPrice: 169, image: 'images/shakes/passion-fruit-shake.webp' },
+            { id: 'sh10', name: 'Rajamsndri Rose Milk', desc: 'Traditional rose milk', price: 49, image: 'images/shakes/rose-milk.webp' },
+            { id: 'sh11', name: 'Bandaru Badam Milk', desc: 'Rich almond milk', price: 49, image: 'images/shakes/badam-milk.webp' },
+            { id: 'sh12', name: 'Ice Crushed Drink', desc: 'Cool crushed ice drink', price: 49, image: 'images/shakes/ice-crushed-drink.webp' },
+            { id: 'sh13', name: 'Chocolate Milk Shake', desc: 'Rich chocolate blend', price: 99, thickPrice: 169, image: 'images/shakes/chocolate-shake.webp' }
         ]
     },
     chicken: {
