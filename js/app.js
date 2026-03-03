@@ -325,10 +325,10 @@ const menuData = {
         name: 'Combos',
         type: 'combos',
         items: [
-            { id: 'cb1', name: 'Super Special Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (8), Medium Pop Corn', price: 1099, image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80' },
-            { id: 'cb2', name: 'Family Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4), Regular Pop Corn', price: 839, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80' },
-            { id: 'cb3', name: 'Big Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4)', price: 699, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' },
-            { id: 'cb4', name: 'Mini Bucket Combo', desc: 'Hot & Crispy (2), Wings (4), Regular Pop Corn', price: 419, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' }
+            { id: 'cb1', name: 'Super Special Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (8), Medium Pop Corn', price: 1099, image: 'images/combos/super-special-combo.webp' },
+            { id: 'cb2', name: 'Family Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4), Regular Pop Corn', price: 839, image: 'images/combos/family-bucket-combo.webp' },
+            { id: 'cb3', name: 'Big Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4)', price: 699, image: 'images/combos/big-bucket-combo.webp' },
+            { id: 'cb4', name: 'Mini Bucket Combo', desc: 'Hot & Crispy (2), Wings (4), Regular Pop Corn', price: 419, image: 'images/combos/mini-bucket-combo.webp' }
         ]
     },
     protein: {
