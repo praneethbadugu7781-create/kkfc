@@ -395,9 +395,9 @@
             name: 'Combos', type: 'combos', veg: false,
             items: [
                 { name: 'Super Special Combo', price: '₹1,099', image: 'images/combos/super-special-combo.webp', veg: false },
-                { name: 'Family Bucket', price: '₹839', image: 'images/combos/family-bucket-combo.webp', veg: false },
-                { name: 'Big Bucket', price: '₹699', image: 'images/combos/big-bucket-combo.webp', veg: false },
-                { name: 'Mini Bucket', price: '₹419', image: 'images/combos/mini-bucket-combo.webp', veg: false }
+                { name: 'Family Bucket Combo', price: '₹839', image: 'images/combos/family-bucket-combo.webp', veg: false },
+                { name: 'Big Bucket Combo', price: '₹699', image: 'images/combos/big-bucket-combo.webp', veg: false },
+                { name: 'Mini Bucket Combo', price: '₹419', image: 'images/combos/mini-bucket-combo.webp', veg: false }
             ]
         },
         protein: {
@@ -477,6 +477,8 @@
 
     // Build hardcoded item names for matching
     var hardcodedNames = {};
+    // Deprecated Firestore IDs (moved from combos to protein category)
+    var deprecatedFsIds = { cb5:1, cb6:1, cb7:1, cb8:1, cb9:1, cb10:1, cb11:1, cb12:1 };
     Object.keys(menuData).forEach(function(catKey) {
         menuData[catKey].items.forEach(function(item) {
             hardcodedNames[item.name.toLowerCase().trim()] = true;
@@ -490,7 +492,8 @@
                 var d = doc.data();
                 var cat = d.category;
                 if (!cat || !menuData[cat]) return;
-                if (d.available === false) return; // Don't show unavailable items on menu page
+                if (d.available === false) return;
+                if (deprecatedFsIds[doc.id]) return; // Skip old combo items moved to protein
 
                 // Skip if name matches a hardcoded item
                 var nameLower = (d.name || '').toLowerCase().trim();
