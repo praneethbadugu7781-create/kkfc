@@ -181,6 +181,7 @@
                     <button class="filter-btn" data-cat="shakes">Shakes</button>
                     <button class="filter-btn" data-cat="chicken">Chicken</button>
                     <button class="filter-btn" data-cat="combos">Combos</button>
+                    <button class="filter-btn" data-cat="protein">High Protein</button>
                 </div>
 
                 <!-- Menu Items Grid -->
@@ -261,6 +262,7 @@
                             <option value="shakes">Shakes</option>
                             <option value="chicken">Chicken</option>
                             <option value="combos">Combos</option>
+                            <option value="protein">High Protein</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -274,8 +276,8 @@
                 </div>
                 <div class="form-group">
                     <label>Image URL</label>
-                    <input type="url" id="itemImage" placeholder="https://...">
-                    <small>Paste an image URL or upload to Firebase Storage</small>
+                    <input type="text" id="itemImage" placeholder="images/category/name.webp or https://...">
+                    <small>Use local path (e.g. images/icecream/vanilla.webp) or a full URL</small>
                 </div>
 
                 <!-- Pricing: changes based on category -->
@@ -393,6 +395,7 @@
                             <option value="shakes">Shakes</option>
                             <option value="chicken">Chicken</option>
                             <option value="combos">Combos</option>
+                            <option value="protein">High Protein</option>
                         </select>
                     </div>
                     <div class="form-group">

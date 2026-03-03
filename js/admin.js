@@ -11,69 +11,76 @@ const SEED_MENU = {
         name: 'Ice Creams',
         type: 'icecream',
         items: [
-            { id: 'ic1', name: 'Vanilla', desc: 'Classic creamy vanilla ice cream', prices: { '250g': 60, '500g': 110, '1kg': 200 }, image: 'https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=400&q=80' },
-            { id: 'ic2', name: 'Strawberry', desc: 'Fresh strawberry flavored delight', prices: { '250g': 60, '500g': 110, '1kg': 200 }, image: 'https://images.unsplash.com/photo-1557142046-c704a3adf364?w=400&q=80' },
-            { id: 'ic3', name: 'Pista', desc: 'Rich pistachio ice cream', prices: { '250g': 60, '500g': 110, '1kg': 200 }, image: 'https://images.unsplash.com/photo-1629385701021-fcd568a743e8?w=400&q=80' },
-            { id: 'ic4', name: 'Mango', desc: 'Tropical mango paradise', prices: { '250g': 70, '500g': 130, '1kg': 240 }, image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400&q=80' },
-            { id: 'ic5', name: 'Butterscotch', desc: 'Caramelized butterscotch crunch', prices: { '250g': 70, '500g': 130, '1kg': 240 }, image: 'https://images.unsplash.com/photo-1580915411954-282cb1b0d780?w=400&q=80' },
-            { id: 'ic6', name: 'Sithaphal', desc: 'Exotic custard apple flavor', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80' },
-            { id: 'ic7', name: 'Anjir', desc: 'Delicious fig ice cream', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&q=80' },
-            { id: 'ic8', name: 'Kulfi', desc: 'Traditional Indian kulfi', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1633933358116-a27b902fad35?w=400&q=80' },
-            { id: 'ic9', name: 'American Nuts', desc: 'Loaded with premium nuts', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?w=400&q=80' },
-            { id: 'ic10', name: 'Nutty Caramel', desc: 'Caramel with crunchy nuts', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1560008581-09826d1de69e?w=400&q=80' },
-            { id: 'ic11', name: 'Mova Badam', desc: 'Banana almond fusion', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=400&q=80' },
-            { id: 'ic12', name: 'Kaju Barfi', desc: 'Inspired by classic Indian sweet', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1488900128323-21503983a07e?w=400&q=80' },
-            { id: 'ic13', name: 'Oreo', desc: 'Cookies and cream delight', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1576506295286-5cda18df43e7?w=400&q=80' },
-            { id: 'ic14', name: 'Fruit Salad', desc: 'Mixed fruit medley', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=400&q=80' },
-            { id: 'ic15', name: 'Flooda', desc: 'Classic falooda ice cream', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&q=80' }
+            { id: 'ic1', name: 'Vanilla', desc: 'Classic creamy vanilla ice cream', prices: { '250g': 60, '500g': 110, '1kg': 200 }, image: 'images/icecream/vanilla.webp' },
+            { id: 'ic2', name: 'Strawberry', desc: 'Fresh strawberry flavored delight', prices: { '250g': 60, '500g': 110, '1kg': 200 }, image: 'images/icecream/strawberry.webp' },
+            { id: 'ic3', name: 'Pista', desc: 'Rich pistachio ice cream', prices: { '250g': 60, '500g': 110, '1kg': 200 }, image: 'images/icecream/pista.webp' },
+            { id: 'ic4', name: 'Mango', desc: 'Tropical mango paradise', prices: { '250g': 70, '500g': 130, '1kg': 240 }, image: 'images/icecream/mango.webp' },
+            { id: 'ic5', name: 'Butterscotch', desc: 'Caramelized butterscotch crunch', prices: { '250g': 70, '500g': 130, '1kg': 240 }, image: 'images/icecream/butterscotch.webp' },
+            { id: 'ic6', name: 'Sithaphal', desc: 'Exotic custard apple flavor', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/sithaphal.webp' },
+            { id: 'ic7', name: 'Anjir', desc: 'Delicious fig ice cream', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/anjir.webp' },
+            { id: 'ic8', name: 'Kulfi', desc: 'Traditional Indian kulfi', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/kulfi.webp' },
+            { id: 'ic9', name: 'American Nuts', desc: 'Loaded with premium nuts', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/american-nuts.webp' },
+            { id: 'ic10', name: 'Nutty Caramel', desc: 'Caramel with crunchy nuts', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/nutty-caramel.webp' },
+            { id: 'ic11', name: 'Mova Badam', desc: 'Banana almond fusion', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/mova-badam.webp' },
+            { id: 'ic12', name: 'Kaju Barfi', desc: 'Inspired by classic Indian sweet', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/kaju-barfi.webp' },
+            { id: 'ic13', name: 'Oreo', desc: 'Cookies and cream delight', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/oreo.webp' },
+            { id: 'ic14', name: 'Fruit Salad', desc: 'Mixed fruit medley', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/fruit-salad.webp' },
+            { id: 'ic15', name: 'Flooda', desc: 'Classic falooda ice cream', prices: { '250g': 100, '500g': 180, '1kg': 340 }, image: 'images/icecream/falooda.webp' }
         ]
     },
     shakes: {
         name: 'Milk Shakes & Thick Shakes',
         type: 'shakes',
         items: [
-            { id: 'sh1', name: 'Pineapple Milk Shake', desc: 'Refreshing pineapple blend', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=400&q=80' },
-            { id: 'sh2', name: 'Guava Milk Shake', desc: 'Tropical guava goodness', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1638176066666-ffb2f013c7dd?w=400&q=80' },
-            { id: 'sh3', name: 'Mango Milk Shake', desc: 'King of fruits shake', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&q=80' },
-            { id: 'sh4', name: 'Tender Coconut Milk Shake', desc: 'Fresh coconut water blend', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1536657464919-892534f60d6e?w=400&q=80' },
-            { id: 'sh5', name: 'Chikoo Milk Shake', desc: 'Sweet sapodilla shake', price: 89, thickPrice: 149, image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80' },
-            { id: 'sh6', name: 'Jackfruit Milk Shake', desc: 'Exotic jackfruit flavor', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=400&q=80' },
-            { id: 'sh7', name: 'Avocado Milk Shake', desc: 'Creamy avocado blend', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=400&q=80' },
-            { id: 'sh8', name: 'Tender Coco Date Milk Shake', desc: 'Coconut and date fusion', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=400&q=80' },
-            { id: 'sh9', name: 'Passion Fruit Milk Shake', desc: 'Tangy passion fruit', price: 99, thickPrice: 169, image: 'https://images.unsplash.com/photo-1546173159-315724a31696?w=400&q=80' },
-            { id: 'sh10', name: 'Rajamsndri Rose Milk', desc: 'Traditional rose milk', price: 49, image: 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=400&q=80' },
-            { id: 'sh11', name: 'Bandaru Badam Milk', desc: 'Rich almond milk', price: 49, image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=80' },
-            { id: 'sh12', name: 'Ice Crushed Drink', desc: 'Cool crushed ice drink', price: 49, image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80' }
+            { id: 'sh1', name: 'Pineapple Milk Shake', desc: 'Refreshing pineapple blend', price: 89, thickPrice: 149, image: 'images/shakes/pineapple-shake.webp' },
+            { id: 'sh2', name: 'Guava Milk Shake', desc: 'Tropical guava goodness', price: 89, thickPrice: 149, image: 'images/shakes/guava-shake.webp' },
+            { id: 'sh3', name: 'Mango Milk Shake', desc: 'King of fruits shake', price: 89, thickPrice: 149, image: 'images/shakes/mango-shake.webp' },
+            { id: 'sh4', name: 'Tender Coconut Milk Shake', desc: 'Fresh coconut water blend', price: 89, thickPrice: 149, image: 'images/shakes/tender-coconut-shake.webp' },
+            { id: 'sh5', name: 'Chikoo Milk Shake', desc: 'Sweet sapodilla shake', price: 89, thickPrice: 149, image: 'images/shakes/chikoo-shake.webp' },
+            { id: 'sh6', name: 'Jackfruit Milk Shake', desc: 'Exotic jackfruit flavor', price: 99, thickPrice: 169, image: 'images/shakes/jackfruit-shake.webp' },
+            { id: 'sh7', name: 'Avocado Milk Shake', desc: 'Creamy avocado blend', price: 99, thickPrice: 169, image: 'images/shakes/avocado-shake.webp' },
+            { id: 'sh8', name: 'Tender Coco Date Milk Shake', desc: 'Coconut and date fusion', price: 99, thickPrice: 169, image: 'images/shakes/tender-coco-date-shake.webp' },
+            { id: 'sh9', name: 'Passion Fruit Milk Shake', desc: 'Tangy passion fruit', price: 99, thickPrice: 169, image: 'images/shakes/passion-fruit-shake.webp' },
+            { id: 'sh10', name: 'Rajamsndri Rose Milk', desc: 'Traditional rose milk', price: 49, image: 'images/shakes/rose-milk.webp' },
+            { id: 'sh11', name: 'Bandaru Badam Milk', desc: 'Rich almond milk', price: 49, image: 'images/shakes/badam-milk.webp' },
+            { id: 'sh12', name: 'Ice Crushed Drink', desc: 'Cool crushed ice drink', price: 49, image: 'images/shakes/ice-crushed-drink.webp' },
+            { id: 'sh13', name: 'Chocolate Milk Shake', desc: 'Rich chocolate blend', price: 99, thickPrice: 169, image: 'images/shakes/chocolate-shake.webp' }
         ]
     },
     chicken: {
         name: 'Chicken (KKFC)',
         type: 'chicken',
         items: [
-            { id: 'ch1', name: 'Crispy Chicken Wings', desc: 'Golden crispy wings', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80' },
-            { id: 'ch2', name: 'Crispy Chicken Drumsticks', desc: 'Juicy drumsticks', sizes: { 'Small (3 Pcs)': 329, 'Medium (6 Pcs)': 639, 'Large (9 Pcs)': 950 }, image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80' },
-            { id: 'ch3', name: 'Crispy Chicken Popcorn', desc: 'Bite-sized chicken pops', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80' },
-            { id: 'ch4', name: 'Crispy Boneless Strips', desc: 'Tender boneless strips', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' },
-            { id: 'ch5', name: 'French Fries', desc: 'Crispy golden fries', sizes: { 'Small': 129, 'Medium': 239, 'Large': 339 }, image: 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=400&q=80' },
-            { id: 'ch6', name: 'Spring Potato', desc: 'Spiral cut potato', price: 50, image: 'https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&q=80' }
+            { id: 'ch1', name: 'Crispy Chicken Wings', desc: 'Golden crispy wings', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/crispy-wings.webp' },
+            { id: 'ch2', name: 'Crispy Chicken Drumsticks', desc: 'Juicy drumsticks', sizes: { 'Small (3 Pcs)': 329, 'Medium (6 Pcs)': 639, 'Large (9 Pcs)': 950 }, image: 'images/chicken/drumsticks.webp' },
+            { id: 'ch3', name: 'Crispy Chicken Popcorn', desc: 'Bite-sized chicken pops', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/chicken-popcorn.webp' },
+            { id: 'ch4', name: 'Crispy Boneless Strips', desc: 'Tender boneless strips', sizes: { 'Small (4 Pcs)': 149, 'Medium (8 Pcs)': 279, 'Large (12 Pcs)': 398 }, image: 'images/chicken/boneless-strips.webp' },
+            { id: 'ch5', name: 'French Fries', desc: 'Crispy golden fries', sizes: { 'Small': 129, 'Medium': 239, 'Large': 339 }, image: 'images/chicken/french-fries.webp' },
+            { id: 'ch6', name: 'Spring Potato', desc: 'Spiral cut potato', price: 50, image: 'images/chicken/spring-potato.webp' }
         ]
     },
     combos: {
         name: 'Combos',
         type: 'combos',
         items: [
-            { id: 'cb1', name: 'Super Special Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (8), Medium Pop Corn', price: 1099, image: 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&q=80' },
-            { id: 'cb2', name: 'Family Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4), Regular Pop Corn', price: 839, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80' },
-            { id: 'cb3', name: 'Big Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4)', price: 699, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' },
-            { id: 'cb4', name: 'Mini Bucket Combo', desc: 'Hot & Crispy (2), Wings (4), Regular Pop Corn', price: 419, image: 'https://images.unsplash.com/photo-1585325701165-351af916e581?w=400&q=80' },
-            { id: 'cb5', name: 'Prawn Crumbed Balls', desc: 'Crispy prawn balls (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400&q=80' },
-            { id: 'cb6', name: 'Bread Butterfly Shrimp', desc: 'Butterfly shrimp (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400&q=80' },
-            { id: 'cb7', name: 'Shrimp Spring Rolls', desc: 'Crispy spring rolls (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1606525437679-037aca74a3e9?w=400&q=80' },
-            { id: 'cb8', name: 'Bread Popcorn', desc: 'Bread coated popcorn', price: 250, image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80' },
-            { id: 'cb9', name: 'Shrimp Samosa', desc: 'Shrimp filled samosas (6 Pcs)', price: 250, image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80' },
-            { id: 'cb10', name: 'Fish Fingers', desc: 'Crispy fish fingers (6 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1580217593608-61931cefc821?w=400&q=80' },
-            { id: 'cb11', name: 'Fish Cutlet', desc: 'Fish cutlets (4 Pcs)', price: 200, image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80' },
-            { id: 'cb12', name: 'Shrimp Rings', desc: 'Crispy shrimp rings', price: 250, image: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=400&q=80' }
+            { id: 'cb1', name: 'Super Special Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (8), Medium Pop Corn', price: 1099, image: 'images/combos/super-special-combo.webp' },
+            { id: 'cb2', name: 'Family Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4), Regular Pop Corn', price: 839, image: 'images/combos/family-bucket-combo.webp' },
+            { id: 'cb3', name: 'Big Bucket Combo', desc: 'Hot & Crispy (4), Wings (8), Strips (4)', price: 699, image: 'images/combos/big-bucket-combo.webp' },
+            { id: 'cb4', name: 'Mini Bucket Combo', desc: 'Hot & Crispy (2), Wings (4), Regular Pop Corn', price: 419, image: 'images/combos/mini-bucket-combo.webp' }
+        ]
+    },
+    protein: {
+        name: 'High Protein Combo',
+        type: 'protein',
+        items: [
+            { id: 'hp1', name: 'Bread Butterfly Shrimp', desc: 'Butterfly shrimp (6 Pcs)', price: 200, image: 'images/protein/bread-butterfly-shrimp.webp' },
+            { id: 'hp2', name: 'Bread Popcorn', desc: 'Bread coated popcorn', price: 250, image: 'images/protein/bread-popcorn.webp' },
+            { id: 'hp3', name: 'Fish Cutlet', desc: 'Fish cutlets (4 Pcs)', price: 200, image: 'images/protein/fish-cutlet.webp' },
+            { id: 'hp4', name: 'Fish Fingers', desc: 'Crispy fish fingers (6 Pcs)', price: 200, image: 'images/protein/fish-fingers.webp' },
+            { id: 'hp5', name: 'Prawn Crumbed Balls', desc: 'Crispy prawn balls (6 Pcs)', price: 200, image: 'images/protein/prawn-crumbed-balls.webp' },
+            { id: 'hp6', name: 'Shrimp Rings', desc: 'Crispy shrimp rings', price: 250, image: 'images/protein/shrimp-rings.webp' },
+            { id: 'hp7', name: 'Shrimp Samosa', desc: 'Shrimp filled samosas (6 Pcs)', price: 250, image: 'images/protein/shrimp-samosa.webp' },
+            { id: 'hp8', name: 'Shrimp Spring Rolls', desc: 'Crispy spring rolls (6 Pcs)', price: 200, image: 'images/protein/shrimp-spring-rolls.webp' }
         ]
     }
 };
@@ -82,7 +89,8 @@ const CATEGORY_NAMES = {
     icecream: 'Ice Creams',
     shakes: 'Shakes',
     chicken: 'Chicken',
-    combos: 'Combos'
+    combos: 'Combos',
+    protein: 'High Protein'
 };
 
 // ========== STATE ==========
@@ -758,15 +766,15 @@ function renderOrdersTable() {
         var status = order.status || 'pending';
 
         return '<tr>' +
-            '<td><strong>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
-            '<td>' + (order.customerName || '—') + '</td>' +
-            '<td>' + (order.phone || '—') + '</td>' +
-            '<td>' + itemCount + ' item' + (itemCount !== 1 ? 's' : '') + '</td>' +
-            '<td><strong>₹' + (order.total || 0) + '</strong></td>' +
-            '<td>' + (order.paymentMethod || '—') + '</td>' +
-            '<td><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
-            '<td>' + dateStr + '<br><small>' + timeStr + '</small></td>' +
-            '<td>' +
+            '<td data-label="Order"><strong>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
+            '<td data-label="Customer">' + (order.customerName || '—') + '</td>' +
+            '<td data-label="Phone">' + (order.phone || '—') + '</td>' +
+            '<td data-label="Items">' + itemCount + ' item' + (itemCount !== 1 ? 's' : '') + '</td>' +
+            '<td data-label="Total"><strong>₹' + (order.total || 0) + '</strong></td>' +
+            '<td data-label="Payment">' + (order.paymentMethod || '—') + '</td>' +
+            '<td data-label="Status"><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
+            '<td data-label="Date">' + dateStr + ' ' + timeStr + '</td>' +
+            '<td data-label="Actions">' +
                 '<button class="btn-icon" onclick="viewOrder(\'' + order.id + '\')" title="View">👁</button>' +
             '</td>' +
         '</tr>';
@@ -789,12 +797,12 @@ function renderRecentOrders() {
         var status = order.status || 'pending';
 
         return '<tr>' +
-            '<td><strong>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
-            '<td>' + (order.customerName || '—') + '</td>' +
-            '<td>' + itemCount + ' items</td>' +
-            '<td>₹' + (order.total || 0) + '</td>' +
-            '<td><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
-            '<td>' + timeStr + '</td>' +
+            '<td data-label="Order"><strong>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
+            '<td data-label="Customer">' + (order.customerName || '—') + '</td>' +
+            '<td data-label="Items">' + itemCount + ' items</td>' +
+            '<td data-label="Total">₹' + (order.total || 0) + '</td>' +
+            '<td data-label="Status"><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
+            '<td data-label="Time">' + timeStr + '</td>' +
         '</tr>';
     }).join('');
 }
