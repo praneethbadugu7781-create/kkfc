@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /admin.html
+Disallow: /js/
+Disallow: /css/
 
 Sitemap: https://kartikeyakkfcfoods.in/sitemap.xml
