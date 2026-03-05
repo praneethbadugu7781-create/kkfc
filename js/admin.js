@@ -183,6 +183,15 @@ function setupLoginForm() {
             return;
         }
 
+        // reCAPTCHA validation
+        if (typeof grecaptcha !== 'undefined') {
+            var captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse) {
+                errEl.textContent = 'Please complete the reCAPTCHA.';
+                return;
+            }
+        }
+
         btn.disabled = true;
         btn.querySelector('span').textContent = 'Signing in...';
 
@@ -204,6 +213,7 @@ function setupLoginForm() {
                 }
                 btn.disabled = false;
                 btn.querySelector('span').textContent = 'Sign In';
+                if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
             });
     });
 }

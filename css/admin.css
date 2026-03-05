@@ -176,6 +176,14 @@ body {
     font-weight: 500;
 }
 
+.login-box .g-recaptcha {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transform: scale(0.9);
+    transform-origin: center;
+}
+
 .btn-login {
     width: 100%;
     padding: 0.85rem;

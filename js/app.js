@@ -1492,6 +1492,15 @@ function processOrder(e) {
         alert('Your cart is empty.');
         return;
     }
+
+    // reCAPTCHA validation
+    if (typeof grecaptcha !== 'undefined') {
+        var captchaResponse = grecaptcha.getResponse();
+        if (!captchaResponse) {
+            alert('Please complete the reCAPTCHA verification.');
+            return;
+        }
+    }
     
     // UPI: require confirmation checkbox + screenshot
     if (paymentMethod === 'upi') {
@@ -1600,6 +1609,7 @@ function processOrder(e) {
     updateCartUI();
     closeCheckout();
     elements.checkoutForm.reset();
+    if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
     
     // Show screenshot reminder for UPI orders, then redirect to WhatsApp
     if (paymentMethod === 'upi') {

@@ -2451,6 +2451,14 @@ h1, h2, h3, h4, h5, h6 {
     gap: var(--sp-lg);
 }
 
+#checkoutRecaptcha {
+    display: flex;
+    justify-content: center;
+    margin: var(--sp-base) 0;
+    transform: scale(0.92);
+    transform-origin: center;
+}
+
 .checkout-actions {
     display: flex;
     flex-direction: column;
