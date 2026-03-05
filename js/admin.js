@@ -775,9 +775,9 @@ function renderMenuGrid() {
                 '<div class="menu-card-desc">' + (item.desc || '') + '</div>' +
                 '<div class="menu-card-price">' + priceText + '</div>' +
                 '<div class="menu-card-actions">' +
-                    '<button class="action-btn edit-btn" onclick="editMenuItem(\'' + item.id + '\')" title="Edit">✎ Edit</button>' +
-                    '<button class="action-btn avail-btn' + (available ? '' : ' off') + '" onclick="toggleMenuAvailability(\'' + item.id + '\', ' + available + ')" title="' + (available ? 'Mark Unavailable' : 'Mark Available') + '">' + (available ? '✓ Available' : '✗ Unavailable') + '</button>' +
-                    '<button class="action-btn delete-btn" onclick="deleteMenuItem(\'' + item.id + '\', \'' + item.name.replace(/'/g, "\\'") + '\')" title="Delete">🗑 Delete</button>' +
+                    '<button class="action-btn edit-btn" onclick="editMenuItem(\'' + item.id + '\')" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span></button>' +
+                    '<button class="action-btn avail-btn' + (available ? '' : ' off') + '" onclick="toggleMenuAvailability(\'' + item.id + '\', ' + available + ')" title="' + (available ? 'Mark Unavailable' : 'Mark Available') + '">' + (available ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Active</span>' : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>Off</span>') + '</button>' +
+                    '<button class="action-btn delete-btn" onclick="deleteMenuItem(\'' + item.id + '\', \'' + item.name.replace(/'/g, "\\'") + '\')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg><span>Delete</span></button>' +
                 '</div>' +
             '</div>' +
         '</div>';
