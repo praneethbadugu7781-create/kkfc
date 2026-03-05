@@ -4,7 +4,22 @@
  * Professional Mobile-First Food Ordering App
  * ============================================
  */
-console.log('[KKFC] app.js v8 loaded');
+// KKFC app initialized
+
+// ========== SECURITY UTILITIES ==========
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+}
+
+function isSafeId(str) {
+    return /^[a-zA-Z0-9_-]+$/.test(str);
+}
 
 // ========== FIRESTORE MENU SYNC ==========
 // Load availability & updates from Firestore, merge into hardcoded menuData
@@ -166,13 +181,13 @@ function syncOffersFromFirestore() {
             var catLabel = (o.category && o.category !== 'all') ? o.category.charAt(0).toUpperCase() + o.category.slice(1) : 'All Items';
 
             html += '<div class="offer-banner">';
-            html += '<span class="offer-banner-tag">' + valLabel + '</span>';
-            html += '<div class="offer-banner-title">' + (o.title || 'Special Offer') + '</div>';
-            if (o.desc) html += '<div class="offer-banner-desc">' + o.desc + '</div>';
+            html += '<span class="offer-banner-tag">' + escapeHTML(valLabel) + '</span>';
+            html += '<div class="offer-banner-title">' + escapeHTML(o.title || 'Special Offer') + '</div>';
+            if (o.desc) html += '<div class="offer-banner-desc">' + escapeHTML(o.desc) + '</div>';
             html += '<div class="offer-banner-meta">';
-            html += '<span class="offer-banner-chip">🍽 ' + catLabel + '</span>';
-            if (o.code) html += '<span class="offer-banner-chip offer-banner-code">' + o.code + '</span>';
-            if (o.minOrder) html += '<span class="offer-banner-chip">Min ₹' + o.minOrder + '</span>';
+            html += '<span class="offer-banner-chip">🍽 ' + escapeHTML(catLabel) + '</span>';
+            if (o.code) html += '<span class="offer-banner-chip offer-banner-code">' + escapeHTML(o.code) + '</span>';
+            if (o.minOrder) html += '<span class="offer-banner-chip">Min ₹' + escapeHTML(String(o.minOrder)) + '</span>';
             html += '</div>';
             html += '</div>';
         });
@@ -441,7 +456,16 @@ function saveCart() {
 function loadCart() {
     try {
         var saved = localStorage.getItem('kkfc_cart');
-        return saved ? JSON.parse(saved) : [];
+        if (!saved) return [];
+        var parsed = JSON.parse(saved);
+        if (!Array.isArray(parsed)) return [];
+        // Validate cart items have expected structure and reasonable values
+        return parsed.filter(function(item) {
+            return item && typeof item.name === 'string' && item.name.length <= 200 &&
+                   typeof item.unitPrice === 'number' && item.unitPrice >= 0 && item.unitPrice <= 100000 &&
+                   typeof item.quantity === 'number' && item.quantity >= 1 && item.quantity <= 100 &&
+                   typeof item.cartItemId === 'string';
+        });
     } catch(e) { return []; }
 }
 
@@ -740,14 +764,14 @@ function renderMenuItems(items, categoryType, container) {
         
         menuItem.innerHTML = `
             <div class="menu-item-info">
-                <h4 class="menu-item-name">${item.name}</h4>
-                <p class="menu-item-desc">${item.desc}</p>
+                <h4 class="menu-item-name">${escapeHTML(item.name)}</h4>
+                <p class="menu-item-desc">${escapeHTML(item.desc)}</p>
                 <span class="menu-item-price">${isAvailable ? priceDisplay : '<span class="stock-badge">Out of Stock</span>'}</span>
             </div>
             <div class="menu-item-image-wrapper">
-                <img src="${item.image}" alt="${item.name}" class="${imgClass}" loading="lazy">
+                <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" class="${imgClass}" loading="lazy">
                 ${isAvailable 
-                    ? `<button class="add-btn" data-item-id="${item.id}" data-category="${categoryType}">+ Add</button>`
+                    ? `<button class="add-btn" data-item-id="${escapeHTML(item.id)}" data-category="${escapeHTML(categoryType)}">+ Add</button>`
                     : `<span class="soldout-label">Sold Out</span>`
                 }
             </div>
@@ -846,14 +870,14 @@ function renderSearchResults(results) {
         
         menuItem.innerHTML = `
             <div class="menu-item-info">
-                <h4 class="menu-item-name">${item.name}</h4>
-                <p class="menu-item-desc">${item.desc}</p>
+                <h4 class="menu-item-name">${escapeHTML(item.name)}</h4>
+                <p class="menu-item-desc">${escapeHTML(item.desc)}</p>
                 <span class="menu-item-price">${isAvailable ? priceDisplay : '<span class="stock-badge">Out of Stock</span>'}</span>
             </div>
             <div class="menu-item-image-wrapper">
-                <img src="${item.image}" alt="${item.name}" class="${imgClass}" loading="lazy">
+                <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" class="${imgClass}" loading="lazy">
                 ${isAvailable 
-                    ? `<button class="add-btn" data-item-id="${item.id}" data-category="${item.categoryType}">+ Add</button>`
+                    ? `<button class="add-btn" data-item-id="${escapeHTML(item.id)}" data-category="${escapeHTML(item.categoryType)}">+ Add</button>`
                     : `<span class="soldout-label">Sold Out</span>`
                 }
             </div>
@@ -960,7 +984,7 @@ function createVariantOption(name, price, isSelected) {
     option.innerHTML = `
         <div class="variant-option-info">
             <div class="variant-radio"></div>
-            <span class="variant-name">${name}</span>
+            <span class="variant-name">${escapeHTML(name)}</span>
         </div>
         <span class="variant-price">${formatPrice(price)}</span>
     `;
@@ -1107,10 +1131,10 @@ function updateCartUI() {
         const cartItemEl = document.createElement('div');
         cartItemEl.className = 'cart-item';
         cartItemEl.innerHTML = `
-            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+            <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" class="cart-item-image">
             <div class="cart-item-details">
-                <h4 class="cart-item-name">${item.name}</h4>
-                ${item.variant ? `<span class="cart-item-variant">${item.variant}</span>` : ''}
+                <h4 class="cart-item-name">${escapeHTML(item.name)}</h4>
+                ${item.variant ? `<span class="cart-item-variant">${escapeHTML(item.variant)}</span>` : ''}
                 <div class="cart-item-controls">
                     <div class="cart-qty-controls">
                         <button class="cart-qty-btn" data-action="decrease" data-cart-id="${item.cartItemId}">
@@ -1239,8 +1263,8 @@ function openCheckout() {
         summaryItem.className = 'summary-item';
         summaryItem.innerHTML = `
             <div class="summary-item-info">
-                <span class="summary-item-name">${item.name} x ${item.quantity}</span>
-                ${item.variant ? `<span class="summary-item-variant">${item.variant}</span>` : ''}
+                <span class="summary-item-name">${escapeHTML(item.name)} x ${item.quantity}</span>
+                ${item.variant ? `<span class="summary-item-variant">${escapeHTML(item.variant)}</span>` : ''}
             </div>
             <span class="summary-item-price">${formatPrice(itemTotal)}</span>
         `;
@@ -1254,7 +1278,7 @@ function openCheckout() {
     if (discount > 0 && appliedCoupon) {
         var discountSummary = document.createElement('div');
         discountSummary.className = 'summary-item summary-discount';
-        discountSummary.innerHTML = '<div class="summary-item-info"><span class="summary-item-name" style="color:#16A34A;">🎉 ' + appliedCoupon.code + ' (' + getCouponLabel(appliedCoupon) + ')</span></div><span class="summary-item-price" style="color:#16A34A;">- ' + formatPrice(discount) + '</span>';
+        discountSummary.innerHTML = '<div class="summary-item-info"><span class="summary-item-name" style="color:#16A34A;">🎉 ' + escapeHTML(appliedCoupon.code) + ' (' + escapeHTML(getCouponLabel(appliedCoupon)) + ')</span></div><span class="summary-item-price" style="color:#16A34A;">- ' + formatPrice(discount) + '</span>';
         elements.checkoutSummary.appendChild(discountSummary);
     }
     
@@ -1441,11 +1465,33 @@ function processOrder(e) {
     e.preventDefault();
     
     const formData = new FormData(elements.checkoutForm);
-    const customerName = formData.get('name');
-    const customerPhone = formData.get('phone');
-    const deliveryLocation = formData.get('location');
-    const orderNotes = formData.get('notes');
+    const customerName = formData.get('name') || '';
+    const customerPhone = formData.get('phone') || '';
+    const deliveryLocation = formData.get('location') || '';
+    const orderNotes = formData.get('notes') || '';
     const paymentMethod = formData.get('paymentMethod') || 'cod';
+
+    // Input validation
+    if (!customerName.trim() || customerName.length > 100) {
+        alert('Please enter a valid name (max 100 characters).');
+        return;
+    }
+    if (!/^[0-9+\-\s()]{7,20}$/.test(customerPhone.trim())) {
+        alert('Please enter a valid phone number.');
+        return;
+    }
+    if (deliveryLocation.length > 300) {
+        alert('Delivery location too long (max 300 characters).');
+        return;
+    }
+    if (orderNotes.length > 500) {
+        alert('Order notes too long (max 500 characters).');
+        return;
+    }
+    if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+    }
     
     // UPI: require confirmation checkbox + screenshot
     if (paymentMethod === 'upi') {

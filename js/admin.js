@@ -5,6 +5,41 @@
  * ============================================
  */
 
+// ========== SECURITY UTILITIES ==========
+/**
+ * Escape HTML special characters to prevent XSS
+ * Must be used on ALL user-controlled data before inserting into innerHTML
+ */
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+}
+
+/**
+ * Sanitize a string for use inside an HTML attribute (onclick, etc.)
+ */
+function escapeAttr(str) {
+    return escapeHTML(str).replace(/\\/g, '\\\\');
+}
+
+/**
+ * Validate that a string is a safe ID (alphanumeric + hyphens only)
+ */
+function isSafeId(str) {
+    return /^[a-zA-Z0-9_-]+$/.test(str);
+}
+
+// Login rate limiting state
+var _loginAttempts = 0;
+var _loginLockUntil = 0;
+var MAX_LOGIN_ATTEMPTS = 5;
+var LOGIN_LOCKOUT_MS = 60000; // 1 minute lockout
+
 // ========== HARDCODED SEED DATA (matches app.js menuData) ==========
 const SEED_MENU = {
     icecream: {
@@ -134,16 +169,39 @@ function setupLoginForm() {
         var btn = document.getElementById('loginBtn');
 
         errEl.textContent = '';
+
+        // Rate limiting: check if locked out
+        if (_loginLockUntil > Date.now()) {
+            var secsLeft = Math.ceil((_loginLockUntil - Date.now()) / 1000);
+            errEl.textContent = 'Too many attempts. Try again in ' + secsLeft + 's.';
+            return;
+        }
+
+        // Basic input validation
+        if (!email || !pass) {
+            errEl.textContent = 'Please enter email and password.';
+            return;
+        }
+
         btn.disabled = true;
         btn.querySelector('span').textContent = 'Signing in...';
 
         auth.signInWithEmailAndPassword(email, pass)
             .then(function() {
+                _loginAttempts = 0; // Reset on success
                 btn.disabled = false;
                 btn.querySelector('span').textContent = 'Sign In';
             })
             .catch(function(err) {
-                errEl.textContent = err.message.replace('Firebase: ', '');
+                _loginAttempts++;
+                if (_loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+                    _loginLockUntil = Date.now() + LOGIN_LOCKOUT_MS;
+                    errEl.textContent = 'Too many failed attempts. Locked for 1 minute.';
+                    _loginAttempts = 0;
+                } else {
+                    // Generic error message — never reveal if email exists
+                    errEl.textContent = 'Invalid email or password.';
+                }
                 btn.disabled = false;
                 btn.querySelector('span').textContent = 'Sign In';
             });
@@ -231,7 +289,7 @@ function startListeners() {
         updateDashboardStats();
     }, function(err) {
         console.error('Menu listener error:', err);
-        document.getElementById('adminMenuGrid').innerHTML = '<div class="loading-state">Error loading menu: ' + err.message + '</div>';
+        document.getElementById('adminMenuGrid').innerHTML = '<div class="loading-state">Error loading menu. Please refresh.</div>';
     });
 
     // Offers
@@ -506,7 +564,7 @@ function renderPopularItems() {
         return '<div class="popular-item">' +
             '<div class="popular-item-rank">' + rankLabel + '</div>' +
             '<div class="popular-item-info">' +
-                '<div class="popular-item-name">' + item.name + '</div>' +
+                '<div class="popular-item-name">' + escapeHTML(item.name) + '</div>' +
                 '<div class="popular-item-bar"><div class="popular-item-bar-fill" style="width:' + barWidth + '%"></div></div>' +
             '</div>' +
             '<div class="popular-item-stats">' +
@@ -694,8 +752,16 @@ function setupMenuTab() {
         fileInput.addEventListener('change', function() {
             var file = this.files[0];
             if (!file) return;
+            // Validate file type (MIME check)
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                showToast('Only JPG, PNG, WebP or GIF images allowed', 'error');
+                this.value = '';
+                return;
+            }
             if (file.size > 5 * 1024 * 1024) {
                 showToast('Image must be under 5MB', 'error');
+                this.value = '';
                 return;
             }
             window._pendingImageFile = file;
@@ -764,20 +830,26 @@ function renderMenuGrid() {
         var priceText = getItemPriceDisplay(item);
         var available = item.available !== false;
         var isSelected = selectedMenuItems.has(item.id);
+        var safeId = isSafeId(item.id) ? item.id : '';
+        var safeName = escapeHTML(item.name);
+        var safeDesc = escapeHTML(item.desc || '');
+        var safeImage = escapeHTML(item.image || 'https://via.placeholder.com/400x200?text=No+Image');
+        var safeCatName = escapeHTML(CATEGORY_NAMES[item.category] || item.category);
+        var safeNameAttr = escapeAttr(item.name);
         return '<div class="menu-card ' + (available ? '' : 'unavailable') + (isSelected ? ' selected' : '') + '">' +
-            '<div class="menu-card-checkbox' + (isSelected ? ' checked' : '') + '" data-id="' + item.id + '" onclick="event.stopPropagation();toggleMenuItemSelection(\'' + item.id + '\')">' + (isSelected ? '☑' : '☐') + '</div>' +
-            '<div class="menu-card-img"><img src="' + (item.image || 'https://via.placeholder.com/400x200?text=No+Image') + '" alt="' + item.name + '" loading="lazy"></div>' +
+            '<div class="menu-card-checkbox' + (isSelected ? ' checked' : '') + '" data-id="' + safeId + '" onclick="event.stopPropagation();toggleMenuItemSelection(\'' + safeId + '\')">' + (isSelected ? '☑' : '☐') + '</div>' +
+            '<div class="menu-card-img"><img src="' + safeImage + '" alt="' + safeName + '" loading="lazy"></div>' +
             '<div class="menu-card-body">' +
                 '<div class="menu-card-top">' +
-                    '<span class="menu-card-name">' + item.name + '</span>' +
-                    '<span class="menu-card-badge">' + (available ? (CATEGORY_NAMES[item.category] || item.category) : 'Unavailable') + '</span>' +
+                    '<span class="menu-card-name">' + safeName + '</span>' +
+                    '<span class="menu-card-badge">' + (available ? safeCatName : 'Unavailable') + '</span>' +
                 '</div>' +
-                '<div class="menu-card-desc">' + (item.desc || '') + '</div>' +
-                '<div class="menu-card-price">' + priceText + '</div>' +
+                '<div class="menu-card-desc">' + safeDesc + '</div>' +
+                '<div class="menu-card-price">' + escapeHTML(priceText) + '</div>' +
                 '<div class="menu-card-actions">' +
-                    '<button class="action-btn edit-btn" onclick="editMenuItem(\'' + item.id + '\')" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span></button>' +
-                    '<button class="action-btn avail-btn' + (available ? '' : ' off') + '" onclick="toggleMenuAvailability(\'' + item.id + '\', ' + available + ')" title="' + (available ? 'Mark Unavailable' : 'Mark Available') + '">' + (available ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Active</span>' : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>Off</span>') + '</button>' +
-                    '<button class="action-btn delete-btn" onclick="deleteMenuItem(\'' + item.id + '\', \'' + item.name.replace(/'/g, "\\'") + '\')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg><span>Delete</span></button>' +
+                    '<button class="action-btn edit-btn" onclick="editMenuItem(\'' + safeId + '\')" title="Edit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg><span>Edit</span></button>' +
+                    '<button class="action-btn avail-btn' + (available ? '' : ' off') + '" onclick="toggleMenuAvailability(\'' + safeId + '\', ' + available + ')" title="' + (available ? 'Mark Unavailable' : 'Mark Available') + '">' + (available ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Active</span>' : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span>Off</span>') + '</button>' +
+                    '<button class="action-btn delete-btn" onclick="deleteMenuItem(\'' + safeId + '\', \'' + safeNameAttr + '\')" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg><span>Delete</span></button>' +
                 '</div>' +
             '</div>' +
         '</div>';
@@ -857,8 +929,8 @@ function openMenuItemModal(item) {
             Object.keys(item.sizes).forEach(function(label) {
                 var row = document.createElement('div');
                 row.className = 'size-row';
-                row.innerHTML = '<input type="text" class="size-label" value="' + label + '">' +
-                    '<input type="number" class="size-price" value="' + item.sizes[label] + '" min="0">' +
+                row.innerHTML = '<input type="text" class="size-label" value="' + escapeAttr(label) + '">' +
+                    '<input type="number" class="size-price" value="' + escapeAttr(String(item.sizes[label])) + '" min="0">' +
                     '<button type="button" class="btn-icon remove-size" title="Remove">&times;</button>';
                 container.appendChild(row);
             });
@@ -924,6 +996,16 @@ function saveMenuItem() {
 
     if (!category || !name) {
         showToast('Please fill category and name', 'error');
+        return;
+    }
+
+    // Input validation: max lengths
+    if (name.length > 100) {
+        showToast('Item name too long (max 100 chars)', 'error');
+        return;
+    }
+    if (desc.length > 500) {
+        showToast('Description too long (max 500 chars)', 'error');
         return;
     }
 
@@ -1150,23 +1232,24 @@ function renderOffersGrid() {
                         offer.type === 'bogo' ? 'Buy 1 Get 1' : 'Free Item';
         var catText = offer.category === 'all' ? 'All Items' : (CATEGORY_NAMES[offer.category] || offer.category);
         var dateText = '';
-        if (offer.startDate) dateText += offer.startDate;
-        if (offer.endDate) dateText += ' → ' + offer.endDate;
+        if (offer.startDate) dateText += escapeHTML(offer.startDate);
+        if (offer.endDate) dateText += ' → ' + escapeHTML(offer.endDate);
+        var safeOfferId = isSafeId(offer.id) ? offer.id : '';
 
         return '<div class="offer-card ' + (active ? '' : 'inactive') + '">' +
-            '<div class="offer-card-title">' + offer.title + '</div>' +
-            '<div class="offer-card-desc">' + (offer.desc || '') + '</div>' +
+            '<div class="offer-card-title">' + escapeHTML(offer.title) + '</div>' +
+            '<div class="offer-card-desc">' + escapeHTML(offer.desc || '') + '</div>' +
             '<div class="offer-card-meta">' +
-                '<span>💰 ' + valueText + '</span>' +
-                '<span>📦 ' + catText + '</span>' +
-                (offer.code ? '<span>🏷️ ' + offer.code + '</span>' : '') +
+                '<span>💰 ' + escapeHTML(valueText) + '</span>' +
+                '<span>📦 ' + escapeHTML(catText) + '</span>' +
+                (offer.code ? '<span>🏷️ ' + escapeHTML(offer.code) + '</span>' : '') +
                 (dateText ? '<span>📅 ' + dateText + '</span>' : '') +
-                (offer.minOrder ? '<span>Min ₹' + offer.minOrder + '</span>' : '') +
+                (offer.minOrder ? '<span>Min ₹' + escapeHTML(String(offer.minOrder)) + '</span>' : '') +
             '</div>' +
             '<div class="offer-card-actions">' +
-                '<button class="btn-icon" onclick="editOffer(\'' + offer.id + '\')" title="Edit">✎</button>' +
-                '<button class="btn-icon" onclick="toggleOffer(\'' + offer.id + '\', ' + active + ')" title="' + (active ? 'Disable' : 'Enable') + '">' + (active ? '✓' : '✗') + '</button>' +
-                '<button class="btn-icon danger" onclick="deleteOffer(\'' + offer.id + '\')" title="Delete">🗑</button>' +
+                '<button class="btn-icon" onclick="editOffer(\'' + safeOfferId + '\')" title="Edit">✎</button>' +
+                '<button class="btn-icon" onclick="toggleOffer(\'' + safeOfferId + '\', ' + active + ')" title="' + (active ? 'Disable' : 'Enable') + '">' + (active ? '✓' : '✗') + '</button>' +
+                '<button class="btn-icon danger" onclick="deleteOffer(\'' + safeOfferId + '\')" title="Delete">🗑</button>' +
             '</div>' +
         '</div>';
     }).join('');
@@ -1215,6 +1298,18 @@ function saveOffer() {
 
     if (!data.title) {
         showToast('Please enter offer title', 'error');
+        return;
+    }
+    if (data.title.length > 100) {
+        showToast('Offer title too long (max 100 chars)', 'error');
+        return;
+    }
+    if (data.desc && data.desc.length > 500) {
+        showToast('Offer description too long (max 500 chars)', 'error');
+        return;
+    }
+    if (data.code && data.code.length > 20) {
+        showToast('Promo code too long (max 20 chars)', 'error');
         return;
     }
 
@@ -1273,18 +1368,19 @@ function renderOrdersTable() {
         var timeStr = date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
         var itemCount = order.items ? order.items.length : 0;
         var status = order.status || 'pending';
+        var safeOrderId = isSafeId(order.id) ? order.id : '';
 
         return '<tr>' +
-            '<td data-label="Order"><strong>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
-            '<td data-label="Customer">' + (order.customerName || '—') + '</td>' +
-            '<td data-label="Phone">' + (order.phone || '—') + '</td>' +
+            '<td data-label="Order"><strong>#' + escapeHTML(order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
+            '<td data-label="Customer">' + escapeHTML(order.customerName || '—') + '</td>' +
+            '<td data-label="Phone">' + escapeHTML(order.phone || '—') + '</td>' +
             '<td data-label="Items">' + itemCount + ' item' + (itemCount !== 1 ? 's' : '') + '</td>' +
-            '<td data-label="Total"><strong>₹' + (order.total || 0) + '</strong></td>' +
-            '<td data-label="Payment">' + (order.paymentMethod || '—') + '</td>' +
-            '<td data-label="Status"><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
-            '<td data-label="Date">' + dateStr + ' ' + timeStr + '</td>' +
+            '<td data-label="Total"><strong>₹' + escapeHTML(String(order.total || 0)) + '</strong></td>' +
+            '<td data-label="Payment">' + escapeHTML(order.paymentMethod || '—') + '</td>' +
+            '<td data-label="Status"><span class="badge badge-' + escapeAttr(status) + '">' + escapeHTML(status.charAt(0).toUpperCase() + status.slice(1)) + '</span></td>' +
+            '<td data-label="Date">' + escapeHTML(dateStr + ' ' + timeStr) + '</td>' +
             '<td data-label="Actions">' +
-                '<button class="btn-icon" onclick="viewOrder(\'' + order.id + '\')" title="View">👁</button>' +
+                '<button class="btn-icon" onclick="viewOrder(\'' + safeOrderId + '\')" title="View">👁</button>' +
             '</td>' +
         '</tr>';
     }).join('');
@@ -1306,12 +1402,12 @@ function renderRecentOrders() {
         var status = order.status || 'pending';
 
         return '<tr>' +
-            '<td data-label="Order"><strong>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
-            '<td data-label="Customer">' + (order.customerName || '—') + '</td>' +
+            '<td data-label="Order"><strong>#' + escapeHTML(order.orderNumber || order.id.slice(-6).toUpperCase()) + '</strong></td>' +
+            '<td data-label="Customer">' + escapeHTML(order.customerName || '—') + '</td>' +
             '<td data-label="Items">' + itemCount + ' items</td>' +
-            '<td data-label="Total">₹' + (order.total || 0) + '</td>' +
-            '<td data-label="Status"><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></td>' +
-            '<td data-label="Time">' + timeStr + '</td>' +
+            '<td data-label="Total">₹' + escapeHTML(String(order.total || 0)) + '</td>' +
+            '<td data-label="Status"><span class="badge badge-' + escapeAttr(status) + '">' + escapeHTML(status.charAt(0).toUpperCase() + status.slice(1)) + '</span></td>' +
+            '<td data-label="Time">' + escapeHTML(timeStr) + '</td>' +
         '</tr>';
     }).join('');
 }
@@ -1328,31 +1424,32 @@ function viewOrder(orderId) {
     if (order.items && order.items.length) {
         itemsHtml = '<ul class="order-items-list">' +
             order.items.map(function(item) {
-                return '<li><span>' + item.name + (item.variant ? ' (' + item.variant + ')' : '') + ' × ' + item.qty + '</span><span>₹' + item.total + '</span></li>';
+                return '<li><span>' + escapeHTML(item.name) + (item.variant ? ' (' + escapeHTML(item.variant) + ')' : '') + ' × ' + escapeHTML(String(item.qty)) + '</span><span>₹' + escapeHTML(String(item.total)) + '</span></li>';
             }).join('') +
         '</ul>';
     }
 
     var body = document.getElementById('orderDetailBody');
+    var safeOrderId = isSafeId(order.id) ? order.id : '';
     body.innerHTML = '<div class="order-detail-grid">' +
         '<div>' +
-            '<div class="order-info-block"><h4>Order Number</h4><p>#' + (order.orderNumber || order.id.slice(-6).toUpperCase()) + '</p></div>' +
-            '<div class="order-info-block"><h4>Customer</h4><p>' + (order.customerName || '—') + '</p></div>' +
-            '<div class="order-info-block"><h4>Phone</h4><p>' + (order.phone || '—') + '</p></div>' +
-            '<div class="order-info-block"><h4>Address</h4><p>' + (order.address || '—') + '</p></div>' +
+            '<div class="order-info-block"><h4>Order Number</h4><p>#' + escapeHTML(order.orderNumber || order.id.slice(-6).toUpperCase()) + '</p></div>' +
+            '<div class="order-info-block"><h4>Customer</h4><p>' + escapeHTML(order.customerName || '—') + '</p></div>' +
+            '<div class="order-info-block"><h4>Phone</h4><p>' + escapeHTML(order.phone || '—') + '</p></div>' +
+            '<div class="order-info-block"><h4>Address</h4><p>' + escapeHTML(order.address || '—') + '</p></div>' +
         '</div>' +
         '<div>' +
-            '<div class="order-info-block"><h4>Date</h4><p>' + dateStr + '</p></div>' +
-            '<div class="order-info-block"><h4>Payment</h4><p>' + (order.paymentMethod || '—') + '</p></div>' +
-            '<div class="order-info-block"><h4>Total</h4><p style="font-size:1.2rem;font-weight:700;color:var(--orange);">₹' + (order.total || 0) + '</p></div>' +
-            '<div class="order-info-block"><h4>Status</h4><span class="badge badge-' + status + '">' + status.charAt(0).toUpperCase() + status.slice(1) + '</span></div>' +
+            '<div class="order-info-block"><h4>Date</h4><p>' + escapeHTML(dateStr) + '</p></div>' +
+            '<div class="order-info-block"><h4>Payment</h4><p>' + escapeHTML(order.paymentMethod || '—') + '</p></div>' +
+            '<div class="order-info-block"><h4>Total</h4><p style="font-size:1.2rem;font-weight:700;color:var(--orange);">₹' + escapeHTML(String(order.total || 0)) + '</p></div>' +
+            '<div class="order-info-block"><h4>Status</h4><span class="badge badge-' + escapeAttr(status) + '">' + escapeHTML(status.charAt(0).toUpperCase() + status.slice(1)) + '</span></div>' +
         '</div>' +
     '</div>' +
     '<div class="order-info-block" style="margin-top:1rem;"><h4>Items</h4>' + (itemsHtml || '<p>No items data</p>') + '</div>' +
-    (order.notes ? '<div class="order-info-block"><h4>Notes</h4><p>' + order.notes + '</p></div>' : '') +
+    (order.notes ? '<div class="order-info-block"><h4>Notes</h4><p>' + escapeHTML(order.notes) + '</p></div>' : '') +
     '<div style="margin-top:1rem;">' +
         '<label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.35rem;">Update Status</label>' +
-        '<select class="order-status-select" onchange="updateOrderStatus(\'' + order.id + '\', this.value)">' +
+        '<select class="order-status-select" onchange="updateOrderStatus(\'' + safeOrderId + '\', this.value)">' +
             '<option value="pending"' + (status === 'pending' ? ' selected' : '') + '>Pending</option>' +
             '<option value="confirmed"' + (status === 'confirmed' ? ' selected' : '') + '>Confirmed</option>' +
             '<option value="preparing"' + (status === 'preparing' ? ' selected' : '') + '>Preparing</option>' +
@@ -1397,7 +1494,7 @@ function showToast(message, type) {
     var container = document.getElementById('toastContainer');
     var toast = document.createElement('div');
     toast.className = 'toast' + (type ? ' ' + type : '');
-    toast.textContent = message;
+    toast.textContent = message; // textContent is safe — no HTML injection
     container.appendChild(toast);
 
     setTimeout(function() {
@@ -1407,3 +1504,23 @@ function showToast(message, type) {
         setTimeout(function() { toast.remove(); }, 300);
     }, 3000);
 }
+
+// ========== AUTO-LOGOUT ON INACTIVITY ==========
+var _inactivityTimer = null;
+var INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+function resetInactivityTimer() {
+    if (_inactivityTimer) clearTimeout(_inactivityTimer);
+    _inactivityTimer = setTimeout(function() {
+        if (auth && auth.currentUser) {
+            auth.signOut();
+            showToast('Session expired. Please log in again.', 'error');
+        }
+    }, INACTIVITY_TIMEOUT_MS);
+}
+
+// Track user activity
+['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(function(evt) {
+    document.addEventListener(evt, resetInactivityTimer, { passive: true });
+});
+resetInactivityTimer();

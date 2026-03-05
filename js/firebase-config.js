@@ -12,39 +12,65 @@
  * 6. Enable Firestore Database (start in test mode, then add rules)
  * 7. Enable Storage (for image uploads)
  * 
- * FIRESTORE RULES (paste in Firebase Console → Firestore → Rules):
+ * ====================================================
+ * FIRESTORE SECURITY RULES — COPY TO FIREBASE CONSOLE
+ * (Firebase Console → Firestore → Rules)
+ * ====================================================
  * 
  * rules_version = '2';
  * service cloud.firestore {
  *   match /databases/{database}/documents {
- *     // Public read for menu, offers
- *     match /menu/{document=**} {
+ * 
+ *     // ---- MENU ----
+ *     // Public read, admin-only write with data validation
+ *     match /menu/{itemId} {
  *       allow read: if true;
- *       allow write: if request.auth != null;
+ *       allow create, update: if request.auth != null
+ *         && request.resource.data.name is string
+ *         && request.resource.data.name.size() <= 100
+ *         && request.resource.data.category is string
+ *         && request.resource.data.category in ['icecream','shakes','chicken','combos','protein'];
+ *       allow delete: if request.auth != null;
  *     }
- *     match /offers/{document=**} {
+ * 
+ *     // ---- OFFERS ----
+ *     // Public read, admin-only write with data validation
+ *     match /offers/{offerId} {
  *       allow read: if true;
- *       allow write: if request.auth != null;
+ *       allow create, update: if request.auth != null
+ *         && request.resource.data.title is string
+ *         && request.resource.data.title.size() <= 100;
+ *       allow delete: if request.auth != null;
  *     }
- *     match /orders/{document=**} {
+ * 
+ *     // ---- ORDERS ----
+ *     // Anyone can create (place order), only admin can read/update/delete
+ *     // Order creation validates required fields and limits sizes
+ *     match /orders/{orderId} {
  *       allow read: if request.auth != null;
- *       allow create: if true;
+ *       allow create: if true
+ *         && request.resource.data.customerName is string
+ *         && request.resource.data.customerName.size() <= 100
+ *         && request.resource.data.phone is string
+ *         && request.resource.data.phone.size() <= 20
+ *         && request.resource.data.total is number
+ *         && request.resource.data.total >= 0
+ *         && request.resource.data.total <= 100000
+ *         && request.resource.data.items is list
+ *         && request.resource.data.items.size() <= 50
+ *         && (!('notes' in request.resource.data) || request.resource.data.notes.size() <= 500);
  *       allow update, delete: if request.auth != null;
  *     }
+ * 
+ *     // ---- SETTINGS ----
  *     match /settings/{document=**} {
  *       allow read: if true;
  *       allow write: if request.auth != null;
  *     }
- *   }
- * }
  * 
- * STORAGE RULES:
- * rules_version = '2';
- * service firebase.storage {
- *   match /b/{bucket}/o {
- *     match /menu-images/{allPaths=**} {
- *       allow read: if true;
- *       allow write: if request.auth != null;
+ *     // Deny everything else by default
+ *     match /{document=**} {
+ *       allow read, write: if false;
  *     }
  *   }
  * }
@@ -74,4 +100,7 @@ const offersRef = db.collection('offers');
 const ordersRef = db.collection('orders');
 const settingsRef = db.collection('settings');
 
-console.log('[KKFC] Firebase initialized. Firestore:', !!db, 'Auth:', !!auth);
+// Suppress detailed Firebase info in production
+if (typeof console !== 'undefined' && console.log) {
+    // Intentionally not logging Firebase internals
+}
