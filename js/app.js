@@ -1494,8 +1494,8 @@ function processOrder(e) {
     }
 
     // reCAPTCHA validation
-    if (typeof grecaptcha !== 'undefined') {
-        var captchaResponse = grecaptcha.getResponse();
+    if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+        var captchaResponse = grecaptcha.enterprise.getResponse();
         if (!captchaResponse) {
             alert('Please complete the reCAPTCHA verification.');
             return;
@@ -1609,7 +1609,7 @@ function processOrder(e) {
     updateCartUI();
     closeCheckout();
     elements.checkoutForm.reset();
-    if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+    if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) grecaptcha.enterprise.reset();
     
     // Show screenshot reminder for UPI orders, then redirect to WhatsApp
     if (paymentMethod === 'upi') {

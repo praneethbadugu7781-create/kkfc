@@ -184,8 +184,8 @@ function setupLoginForm() {
         }
 
         // reCAPTCHA validation
-        if (typeof grecaptcha !== 'undefined') {
-            var captchaResponse = grecaptcha.getResponse();
+        if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) {
+            var captchaResponse = grecaptcha.enterprise.getResponse();
             if (!captchaResponse) {
                 errEl.textContent = 'Please complete the reCAPTCHA.';
                 return;
@@ -213,7 +213,7 @@ function setupLoginForm() {
                 }
                 btn.disabled = false;
                 btn.querySelector('span').textContent = 'Sign In';
-                if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+                if (typeof grecaptcha !== 'undefined' && grecaptcha.enterprise) grecaptcha.enterprise.reset();
             });
     });
 }
