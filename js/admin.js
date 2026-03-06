@@ -1258,13 +1258,14 @@ function seedMenuToFirestore() {
         });
 }
 
-// Sync images AND categories from hardcoded SEED_MENU to Firestore
+// Sync images AND categories from hardcoded SEED_MENU to Firestore, and delete deprecated duplicates
 function syncImagesToFirestore() {
-    if (!confirm('This will sync ALL menu item images and categories in Firestore to match the hardcoded menu. Continue?')) return;
+    if (!confirm('This will sync ALL menu item images/categories and remove deprecated duplicates. Continue?')) return;
 
     var batch = db.batch();
     var count = 0;
 
+    // Update all items from SEED_MENU
     Object.keys(SEED_MENU).forEach(function(catKey) {
         var cat = SEED_MENU[catKey];
         cat.items.forEach(function(item) {
@@ -1276,14 +1277,20 @@ function syncImagesToFirestore() {
         });
     });
 
+    // Delete old deprecated combo IDs (protein items that were duplicated as cb5-cb12)
+    var deprecatedIds = ['cb5', 'cb6', 'cb7', 'cb8', 'cb9', 'cb10', 'cb11', 'cb12'];
+    deprecatedIds.forEach(function(id) {
+        batch.delete(menuRef.doc(id));
+    });
+
     batch.commit()
         .then(function() {
-            console.log('[KKFC] Synced ' + count + ' item images to Firestore');
-            showToast(count + ' item images synced to Firestore!', 'success');
+            console.log('[KKFC] Synced ' + count + ' items and deleted ' + deprecatedIds.length + ' deprecated duplicates');
+            showToast(count + ' items synced, ' + deprecatedIds.length + ' duplicates removed!', 'success');
         })
         .catch(function(err) {
-            console.error('[KKFC] Image sync error:', err);
-            showToast('Image sync error: ' + err.message, 'error');
+            console.error('[KKFC] Sync error:', err);
+            showToast('Sync error: ' + err.message, 'error');
         });
 }
 
