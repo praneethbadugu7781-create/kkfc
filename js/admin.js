@@ -1258,9 +1258,9 @@ function seedMenuToFirestore() {
         });
 }
 
-// Sync only image paths from hardcoded SEED_MENU to Firestore
+// Sync images AND categories from hardcoded SEED_MENU to Firestore
 function syncImagesToFirestore() {
-    if (!confirm('This will update ALL menu item images in Firestore to match the latest local image files. Continue?')) return;
+    if (!confirm('This will sync ALL menu item images and categories in Firestore to match the hardcoded menu. Continue?')) return;
 
     var batch = db.batch();
     var count = 0;
@@ -1268,11 +1268,11 @@ function syncImagesToFirestore() {
     Object.keys(SEED_MENU).forEach(function(catKey) {
         var cat = SEED_MENU[catKey];
         cat.items.forEach(function(item) {
-            if (item.image) {
-                var docRef = menuRef.doc(item.id);
-                batch.update(docRef, { image: item.image });
-                count++;
-            }
+            var docRef = menuRef.doc(item.id);
+            var updateData = { category: catKey };
+            if (item.image) updateData.image = item.image;
+            batch.update(docRef, updateData);
+            count++;
         });
     });
 
