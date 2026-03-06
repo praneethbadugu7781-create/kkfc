@@ -1029,13 +1029,14 @@ function saveMenuItem() {
         btn.textContent = 'Compressing image...';
         console.log('[KKFC] Compressing image:', file.name, 'Size:', file.size, 'Type:', file.type);
 
-        compressImage(file, 600, 0.7, function(base64Url) {
+        compressImage(file, 800, 0.75, function(base64Url) {
             console.log('[KKFC] Image compressed, base64 length:', base64Url.length);
             window._pendingImageFile = null;
             doSaveMenuItem(id, category, name, desc, base64Url, available, btn);
         }, function(err) {
             console.error('[KKFC] Image compression error:', err);
-            showToast('Image processing failed: ' + err, 'error');
+            window._pendingImageFile = null;
+            showToast('Image processing failed: ' + err + '. Please try a different image.', 'error');
             btn.disabled = false;
             btn.textContent = 'Save Item';
         });
@@ -1089,6 +1090,7 @@ function compressImage(file, maxWidth, quality, onSuccess, onError) {
 }
 
 function doSaveMenuItem(id, category, name, desc, image, available, btn) {
+    var DEL = firebase.firestore.FieldValue.delete();
     var data = {
         category: category,
         name: name,
@@ -1098,11 +1100,14 @@ function doSaveMenuItem(id, category, name, desc, image, available, btn) {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // Clear old pricing fields
-    delete data.price;
-    delete data.thickPrice;
-    delete data.prices;
-    delete data.sizes;
+    // Actively remove old pricing fields from Firestore when switching category
+    // Default: delete all pricing, then set the correct one below
+    if (id) {
+        data.price = DEL;
+        data.thickPrice = DEL;
+        data.prices = DEL;
+        data.sizes = DEL;
+    }
 
     // Set pricing based on category
     if (category === 'icecream') {
@@ -1115,6 +1120,7 @@ function doSaveMenuItem(id, category, name, desc, image, available, btn) {
         data.price = Number(document.getElementById('priceShake').value) || 0;
         var thick = Number(document.getElementById('priceThick').value);
         if (thick > 0) data.thickPrice = thick;
+        else if (id) data.thickPrice = DEL;
     } else if (category === 'chicken') {
         var sizeRows = document.querySelectorAll('#chickenSizesContainer .size-row');
         var hasSizes = false;
@@ -1136,21 +1142,55 @@ function doSaveMenuItem(id, category, name, desc, image, available, btn) {
         data.price = Number(document.getElementById('itemPrice').value) || 0;
     }
 
+    console.log('[KKFC] Saving item:', id || 'new', 'image length:', (image || '').length, 'category:', category);
+
     var promise;
     if (id) {
         promise = menuRef.doc(id).update(data);
     } else {
+        // Remove DEL sentinels for new docs (not needed)
+        delete data.price;
+        delete data.thickPrice;
+        delete data.prices;
+        delete data.sizes;
+        // Re-set pricing for new item
+        if (category === 'icecream') {
+            data.prices = {
+                '250g': Number(document.getElementById('price250g').value) || 0,
+                '500g': Number(document.getElementById('price500g').value) || 0,
+                '1kg': Number(document.getElementById('price1kg').value) || 0
+            };
+        } else if (category === 'shakes') {
+            data.price = Number(document.getElementById('priceShake').value) || 0;
+            var thickNew = Number(document.getElementById('priceThick').value);
+            if (thickNew > 0) data.thickPrice = thickNew;
+        } else if (category === 'chicken') {
+            var sizeRows2 = document.querySelectorAll('#chickenSizesContainer .size-row');
+            var sizes2 = {};
+            var hasSizes2 = false;
+            sizeRows2.forEach(function(row) {
+                var label = row.querySelector('.size-label').value.trim();
+                var price = Number(row.querySelector('.size-price').value);
+                if (label && price > 0) { sizes2[label] = price; hasSizes2 = true; }
+            });
+            if (hasSizes2) data.sizes = sizes2;
+            else data.price = Number(document.getElementById('itemPrice').value) || 0;
+        } else {
+            data.price = Number(document.getElementById('itemPrice').value) || 0;
+        }
         data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
         promise = menuRef.add(data);
     }
 
     promise.then(function() {
+        console.log('[KKFC] Item saved successfully:', id || 'new');
         showToast(id ? 'Item updated!' : 'Item added!');
         closeModal('menuItemModal');
         btn.disabled = false;
         btn.textContent = 'Save Item';
     }).catch(function(err) {
-        showToast('Error: ' + err.message, 'error');
+        console.error('[KKFC] Save error:', err);
+        showToast('Error saving: ' + err.message, 'error');
         btn.disabled = false;
         btn.textContent = 'Save Item';
     });
