@@ -739,6 +739,9 @@ function setupMenuTab() {
     // Sync images button
     document.getElementById('syncImagesBtn').addEventListener('click', syncImagesToFirestore);
 
+    // Clean & Reseed button
+    document.getElementById('cleanReseedBtn').addEventListener('click', cleanAndReseedMenu);
+
     // Category change in modal — toggle pricing fields
     document.getElementById('itemCategory').addEventListener('change', function() {
         updatePricingSection(this.value);
@@ -1256,6 +1259,73 @@ function seedMenuToFirestore() {
         .catch(function(err) {
             showToast('Seed error: ' + err.message, 'error');
         });
+}
+
+// CLEAN & RESEED: Delete ALL menu items then re-seed from hardcoded data
+function cleanAndReseedMenu() {
+    if (!confirm('⚠️ WARNING: This will DELETE ALL menu items from Firestore and re-upload only the official menu. Use this to remove spam/junk data. Continue?')) return;
+    if (!confirm('Are you ABSOLUTELY sure? This cannot be undone.')) return;
+
+    showToast('Cleaning menu... please wait', 'info');
+
+    // Step 1: Get all docs and delete them in batches
+    menuRef.get().then(function(snapshot) {
+        var deletePromises = [];
+        var batch = db.batch();
+        var batchCount = 0;
+
+        snapshot.forEach(function(doc) {
+            batch.delete(doc.ref);
+            batchCount++;
+            // Firestore batch limit is 500
+            if (batchCount >= 450) {
+                deletePromises.push(batch.commit());
+                batch = db.batch();
+                batchCount = 0;
+            }
+        });
+        if (batchCount > 0) {
+            deletePromises.push(batch.commit());
+        }
+
+        return Promise.all(deletePromises);
+    }).then(function() {
+        console.log('[KKFC] All junk deleted, re-seeding...');
+
+        // Step 2: Re-seed from SEED_MENU
+        var seedBatch = db.batch();
+        var count = 0;
+
+        Object.keys(SEED_MENU).forEach(function(catKey) {
+            var cat = SEED_MENU[catKey];
+            cat.items.forEach(function(item) {
+                var docRef = menuRef.doc(item.id);
+                var data = {
+                    category: catKey,
+                    name: item.name,
+                    desc: item.desc || '',
+                    image: item.image || '',
+                    available: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                if (item.prices) data.prices = item.prices;
+                if (item.sizes) data.sizes = item.sizes;
+                if (item.price !== undefined) data.price = item.price;
+                if (item.thickPrice !== undefined) data.thickPrice = item.thickPrice;
+                seedBatch.set(docRef, data);
+                count++;
+            });
+        });
+
+        return seedBatch.commit().then(function() { return count; });
+    }).then(function(count) {
+        console.log('[KKFC] Clean & reseed complete:', count, 'items');
+        showToast('Done! Removed all junk. ' + count + ' official items restored.', 'success');
+    }).catch(function(err) {
+        console.error('[KKFC] Clean & reseed error:', err);
+        showToast('Error: ' + err.message, 'error');
+    });
 }
 
 // Sync images AND categories from hardcoded SEED_MENU to Firestore, and delete deprecated duplicates
