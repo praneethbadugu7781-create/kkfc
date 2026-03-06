@@ -1261,23 +1261,58 @@ function seedMenuToFirestore() {
         });
 }
 
-// CLEAN & RESEED: Delete ALL menu items then re-seed from hardcoded data
+// CLEAN & RESEED: Delete spam items, keep admin-added items, restore hardcoded data
 function cleanAndReseedMenu() {
-    if (!confirm('⚠️ WARNING: This will DELETE ALL menu items from Firestore and re-upload only the official menu. Use this to remove spam/junk data. Continue?')) return;
-    if (!confirm('Are you ABSOLUTELY sure? This cannot be undone.')) return;
+    if (!confirm('⚠️ This will remove spam/junk items and restore official menu items. Admin-added items will be KEPT. Continue?')) return;
 
     showToast('Cleaning menu... please wait', 'info');
 
-    // Step 1: Get all docs and delete them in batches
+    // Build set of known hardcoded IDs
+    var knownIds = {};
+    Object.keys(SEED_MENU).forEach(function(catKey) {
+        SEED_MENU[catKey].items.forEach(function(item) {
+            knownIds[item.id] = true;
+        });
+    });
+
+    // Valid categories from SEED_MENU
+    var validCategories = Object.keys(SEED_MENU);
+
+    // Step 1: Get all docs, delete only spam (not in SEED_MENU AND not a valid admin-added item)
     menuRef.get().then(function(snapshot) {
         var deletePromises = [];
         var batch = db.batch();
         var batchCount = 0;
+        var deletedCount = 0;
+        var keptCount = 0;
+        var adminItems = []; // admin-added items to preserve
 
         snapshot.forEach(function(doc) {
+            var id = doc.id;
+            var data = doc.data();
+
+            if (knownIds[id]) {
+                // Hardcoded item — will be re-seeded, skip
+                return;
+            }
+
+            // Check if it's a legitimate admin-added item
+            var isLegitimate = data.category
+                && validCategories.indexOf(data.category) !== -1
+                && data.name && data.name.length <= 100
+                && data.image && data.image.indexOf('data:image/') === 0; // admin uploads are base64
+
+            if (isLegitimate) {
+                // Keep this item
+                adminItems.push({ id: id, data: data });
+                keptCount++;
+                return;
+            }
+
+            // Spam — delete it
             batch.delete(doc.ref);
+            deletedCount++;
             batchCount++;
-            // Firestore batch limit is 500
             if (batchCount >= 450) {
                 deletePromises.push(batch.commit());
                 batch = db.batch();
@@ -1288,11 +1323,10 @@ function cleanAndReseedMenu() {
             deletePromises.push(batch.commit());
         }
 
+        console.log('[KKFC] Deleting ' + deletedCount + ' spam items, keeping ' + keptCount + ' admin-added items');
         return Promise.all(deletePromises);
     }).then(function() {
-        console.log('[KKFC] All junk deleted, re-seeding...');
-
-        // Step 2: Re-seed from SEED_MENU
+        // Step 2: Re-seed hardcoded items
         var seedBatch = db.batch();
         var count = 0;
 
@@ -1320,8 +1354,8 @@ function cleanAndReseedMenu() {
 
         return seedBatch.commit().then(function() { return count; });
     }).then(function(count) {
-        console.log('[KKFC] Clean & reseed complete:', count, 'items');
-        showToast('Done! Removed all junk. ' + count + ' official items restored.', 'success');
+        console.log('[KKFC] Clean & reseed complete:', count, 'items restored');
+        showToast('Done! Spam removed. ' + count + ' official items restored. Admin-added items kept.', 'success');
     }).catch(function(err) {
         console.error('[KKFC] Clean & reseed error:', err);
         showToast('Error: ' + err.message, 'error');
