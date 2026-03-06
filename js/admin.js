@@ -736,6 +736,9 @@ function setupMenuTab() {
     // Seed menu button
     document.getElementById('seedMenuBtn').addEventListener('click', seedMenuToFirestore);
 
+    // Sync images button
+    document.getElementById('syncImagesBtn').addEventListener('click', syncImagesToFirestore);
+
     // Category change in modal — toggle pricing fields
     document.getElementById('itemCategory').addEventListener('change', function() {
         updatePricingSection(this.value);
@@ -1252,6 +1255,35 @@ function seedMenuToFirestore() {
         })
         .catch(function(err) {
             showToast('Seed error: ' + err.message, 'error');
+        });
+}
+
+// Sync only image paths from hardcoded SEED_MENU to Firestore
+function syncImagesToFirestore() {
+    if (!confirm('This will update ALL menu item images in Firestore to match the latest local image files. Continue?')) return;
+
+    var batch = db.batch();
+    var count = 0;
+
+    Object.keys(SEED_MENU).forEach(function(catKey) {
+        var cat = SEED_MENU[catKey];
+        cat.items.forEach(function(item) {
+            if (item.image) {
+                var docRef = menuRef.doc(item.id);
+                batch.update(docRef, { image: item.image });
+                count++;
+            }
+        });
+    });
+
+    batch.commit()
+        .then(function() {
+            console.log('[KKFC] Synced ' + count + ' item images to Firestore');
+            showToast(count + ' item images synced to Firestore!', 'success');
+        })
+        .catch(function(err) {
+            console.error('[KKFC] Image sync error:', err);
+            showToast('Image sync error: ' + err.message, 'error');
         });
 }
 
