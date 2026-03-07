@@ -1208,17 +1208,26 @@ function editMenuItem(itemId) {
 }
 
 function toggleMenuAvailability(itemId, currentState) {
+    if (!itemId) { showToast('Error: Invalid item ID', 'error'); return; }
     menuRef.doc(itemId).update({ available: !currentState })
         .then(function() {
             showToast(currentState ? 'Item marked unavailable' : 'Item is now available');
+        })
+        .catch(function(err) {
+            console.error('[KKFC] Toggle availability error:', err);
+            showToast('Error: ' + err.message, 'error');
         });
 }
 
 function deleteMenuItem(itemId, itemName) {
+    if (!itemId) { showToast('Error: Invalid item ID', 'error'); return; }
     if (!confirm('Delete "' + itemName + '"? This cannot be undone.')) return;
     menuRef.doc(itemId).delete()
         .then(function() { showToast('Item deleted'); })
-        .catch(function(err) { showToast('Error: ' + err.message, 'error'); });
+        .catch(function(err) {
+            console.error('[KKFC] Delete error:', err);
+            showToast('Error: ' + err.message, 'error');
+        });
 }
 
 // Seed hardcoded menu to Firestore
